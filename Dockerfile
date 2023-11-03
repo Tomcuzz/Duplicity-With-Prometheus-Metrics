@@ -2,7 +2,7 @@
 FROM python:3
 
 #Expose the nessasary volumes
-VOLUME ["/saved_data", "/home/duplicity/.cache/duplicity", "/home/duplicity/.gnupg"]
+VOLUME ["/home/duplicity/backup/data", "/home/duplicity/config"]
 
 # Create Enviroment Veriables for exporter
 ENV EXPORTER_PORT="9877"
@@ -10,9 +10,13 @@ ENV EXPORTER_PORT="9877"
 # Create Environment veriable for the name of the backup
 ENV BACKUP_NAME="duplicy_backup"
 
-# Create Environment veriable for checking backup and restore are working correctly.
-ENV DATE_FILE_PRE_BACKUP=""
-ENV DATE_FILE_RESTORED=""
+# Create Environment veriable for how often to backup
+ENV BACKUP_INTERVAL="86400"
+
+# Create Environment veriable for storage locations.
+ENV LAST_METRIC_LOCATION="/home/duplicity/config/last_metrics"
+ENV DATE_FILE_PRE_BACKUP="/home/duplicity/backup/test/pre_backup"
+ENV DATE_FILE_RESTORED="/home/duplicity/backup/test/restore"
 
 # ENV HOME=/home/duplicity
 
@@ -34,8 +38,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN set -x \
     # Run as non-root user.
  && adduser --disabled-password --uid 1896 duplicity \
- && mkdir -p /home/duplicity/.cache/duplicity \
- && mkdir -p /home/duplicity/.gnupg \
+ && mkdir -p /home/duplicity/config \
+ && mkdir -p /home/duplicity/config/.cache/duplicity \
+ && mkdir -p /home/duplicity/config/.gnupg \
+ && mkdir -p /home/duplicity/backup \
+ && mkdir -p /home/duplicity/backup/data \
+ && mkdir -p /home/duplicity/backup/test \
  && chmod -R go+rwx /home/duplicity/
 
 # Brief check duplicity works.
