@@ -13,10 +13,16 @@ ENV BACKUP_NAME="duplicy_backup"
 # Create Environment veriable for how often to backup
 ENV BACKUP_INTERVAL="86400"
 
+# Create Environment veriable for duplicity configs
+ENV DUPLICITY_FULL_IF_OLDER_THAN=""
+ENV DUPLICITY_VERBOSITY=""
+ENV DUPLICITY_ALLOW_SOURCE_MISMATCH = "True"
+
 # Create Environment veriable for storage locations.
 ENV LAST_METRIC_LOCATION="/home/duplicity/config/last_metrics"
 ENV DATE_FILE_PRE_BACKUP="/home/duplicity/backup/test/pre_backup"
 ENV DATE_FILE_RESTORED="/home/duplicity/backup/test/restore"
+ENV DUPLICITY_SERVER_REMOTE_PATH="/home/duplicity/backup"
 
 # Duplicity backup server location.
 ENV DUPLICITY_SERVER_CONNECTION_TYPE="ssh"
