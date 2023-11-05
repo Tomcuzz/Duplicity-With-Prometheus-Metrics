@@ -1,5 +1,8 @@
 """Duplicity healper"""
 
+from dataclasses import dataclass
+from enum import Enum
+
 import copy
 import time
 import subprocess
@@ -26,36 +29,46 @@ metric_template = {
     }
 }
 
+class DuplicityBackupMethod(Enum):
+    """An enum to control backup storage location connection type."""
+    UNKNOWN = 0
+    SSH = 1
+
+
+@dataclass
+class SSHParams():
+    """Setup params for ssh params."""
+    port:int = 22
+    key_file:str = "/id_rsa"
+    user:str = "duplicity"
+    host:str = "192.168.1.1"
+    strict_host_key_checking:bool = False
+
+
+@dataclass
+class DuplicityLocationParams():
+    """Setup params for duplicity location."""
+    pre_backup_date_file:str = ""
+    restored_date_file:str = ""
+    remote_path:str = "/home/duplicity/backup"
+
+
+@dataclass
+class DuplicityParams:
+    """Setup params for dupliciy class."""
+    backup_name:str = "duplicity"
+    location_params:DuplicityLocationParams = DuplicityLocationParams()
+    full_if_older_than:str = ""
+    verbosity:str = ""
+    allow_source_mismatch:bool = True
+    backup_method:DuplicityBackupMethod = DuplicityBackupMethod.SSH
+    ssh_params:SSHParams = None
+
+
 class Duplicity:
     """ Class to handle Duplicity commands. """
-    def __init__(
-            self,
-            backup_name="duplicity",
-            pre_backup_date_file="",
-            restored_date_file="",
-            duplicity_full_if_older_than="",
-            duplicity_verbosity="",
-            duplicity_allow_source_mismatch=True,
-            duplicity_backup_method="ssh",
-            duplicity_ssh_port=22,
-            duplicity_ssh_key_file="/id_rsa",
-            duplicity_ssh_user="duplicity",
-            duplicity_ssh_host="192.168.1.1",
-            duplicity_remote_path="/home/duplicity/backup",
-            duplicity_ssh_strict_host_key_checking=False):
-        self.backup_name = backup_name
-        self.pre_backup_date_file = pre_backup_date_file
-        self.restored_date_file = restored_date_file
-        self.duplicity_full_if_older_than = duplicity_full_if_older_than
-        self.duplicity_verbosity = duplicity_verbosity
-        self.duplicity_allow_source_mismatch = duplicity_allow_source_mismatch
-        self.duplicity_backup_method = duplicity_backup_method
-        self.duplicity_ssh_port = duplicity_ssh_port
-        self.duplicity_ssh_key_file = duplicity_ssh_key_file
-        self.duplicity_ssh_user = duplicity_ssh_user
-        self.duplicity_ssh_host = duplicity_ssh_host
-        self.duplicity_remote_path = duplicity_remote_path
-        self.duplicity_ssh_strict_host_key_checking = duplicity_ssh_strict_host_key_checking
+    def __init__(self, params:DuplicityParams):
+        self.params = params
 
     def run_pre_backup(self) -> dict:
         """ Run pre backup processing. """
@@ -71,30 +84,30 @@ class Duplicity:
     def __build_duplicity_command(self) -> list:
         """ Build the duplicity command. """
         out = ["duplicity"]
-        if self.duplicity_full_if_older_than:
-            out.append("--full-if-older-than=" + self.duplicity_full_if_older_than)
-        if self.duplicity_verbosity:
-            out.append("--verbosity=" + self.duplicity_verbosity)
-        if self.duplicity_allow_source_mismatch:
+        if self.params.full_if_older_than:
+            out.append("--full-if-older-than=" + self.params.full_if_older_than)
+        if self.params.verbosity:
+            out.append("--verbosity=" + self.params.verbosity)
+        if self.params.allow_source_mismatch:
             out.append("--allow-source-mismatch")
-        if self.duplicity_backup_method == "ssh":
+        if self.params.backup_method == "ssh":
             ssh_options = "--rsync-options='-e \"ssh "
-            ssh_options += " -p " + self.duplicity_ssh_port
-            ssh_options += " -i " + self.duplicity_ssh_key_file
-            if self.duplicity_ssh_strict_host_key_checking:
+            ssh_options += " -p " + self.params.ssh_params.port
+            ssh_options += " -i " + self.params.ssh_params.key_file
+            if self.params.ssh_params.strict_host_key_checking:
                 ssh_options += " -o StrictHostKeyChecking=yes"
             else:
                 ssh_options += " -o StrictHostKeyChecking=no"
             ssh_options += "\"'"
             out.append(ssh_options)
         out.append(" /home/duplicity/backup/data")
-        if self.duplicity_backup_method == "ssh":
+        if self.params.backup_method == DuplicityBackupMethod.SSH:
             rsync_location = "rsync://"
-            rsync_location += self.duplicity_ssh_user
+            rsync_location += self.params.ssh_params.user
             rsync_location += "@"
-            rsync_location += self.duplicity_ssh_host
+            rsync_location += self.params.ssh_params.host
             rsync_location += ":"
-            rsync_location += self.duplicity_remote_path
+            rsync_location += self.params.location_params.remote_path
             out.append(rsync_location)
         return out
 
@@ -121,7 +134,7 @@ class Duplicity:
 
         reached_stats = False
         for line in log_output:
-            if reached_stats: 
+            if reached_stats:
                 if line.startswith("-------------------------------------------------"):
                     out["getSuccess"] = True
                 else:
@@ -163,9 +176,9 @@ class Duplicity:
             "backup-test-file-date": 0,
             "backup-test-file-success": False,
         }
-        self.__capture_command_out(['date', '>', self.pre_backup_date_file])
+        self.__capture_command_out(['date', '>', self.params.location_params.pre_backup_date_file])
 
-        out_temp = self.__read_date_file(self.pre_backup_date_file)
+        out_temp = self.__read_date_file(self.params.location_params.pre_backup_date_file)
         out["restore-file-read-success"] = out_temp[0]
         out["restore-file-date"] = out_temp[1]
 
@@ -177,7 +190,7 @@ class Duplicity:
             "restore-file-date": 0,
             "restore-file-read-success": False
         }
-        out_temp = self.__read_date_file(self.restored_date_file)
+        out_temp = self.__read_date_file(self.params.location_params.restored_date_file)
         out["restore-file-read-success"] = out_temp[0]
         out["restore-file-date"] = out_temp[1]
 

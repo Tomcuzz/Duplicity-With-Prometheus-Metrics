@@ -18,7 +18,13 @@ ENV LAST_METRIC_LOCATION="/home/duplicity/config/last_metrics"
 ENV DATE_FILE_PRE_BACKUP="/home/duplicity/backup/test/pre_backup"
 ENV DATE_FILE_RESTORED="/home/duplicity/backup/test/restore"
 
-# ENV HOME=/home/duplicity
+# Duplicity backup server location.
+ENV DUPLICITY_SERVER_CONNECTION_TYPE="ssh"
+ENV DUPLICITY_SERVER_SSH_HOST="192.168.1.1"
+ENV DUPLICITY_SERVER_SSH_PORT="22"
+ENV DUPLICITY_SERVER_SSH_USER="duplicity"
+ENV DUPLICITY_SERVER_SSH_KEY_FILE="/id_rsa"
+ENV DUPLICITY_SERVER_SSH_STRICT_HOST_KEY_CHECKING="False"
 
 # Setup the working directory
 WORKDIR /usr/src/app

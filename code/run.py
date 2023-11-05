@@ -14,10 +14,8 @@ ONE_DAY = "86400"
 @dataclass
 class AppMetricParams:
     """ Needed Setup params for AppMetrics. """
-    backup_name:str
+    duplicity_params:duplicity.DuplicityParams = duplicity.DuplicityParams()
     last_metric_location:str
-    pre_backup_date_file:str
-    restored_date_file:str
     backup_interval:int
 
 @dataclass
@@ -76,11 +74,15 @@ class AppMetrics:
         self.restored_date_file = params.restored_date_file
         self.backup_interval = params.backup_interval
         print("Adding Metrics")
-        self.duplicity = duplicity.Duplicity(
-            backup_name=params.backup_name,
+        duplicity_location_params = duplicity.DuplicityLocationParams(
             pre_backup_date_file=params.pre_backup_date_file,
             restored_date_file=params.restored_date_file
         )
+        duplicity_params = duplicity.DuplicityParams(
+            backup_name=params.backup_name,
+            location_params=duplicity_location_params
+        )
+        self.duplicity = duplicity.Duplicity(params=duplicity_params)
         self.last_run_metrics = {}
         self.metrics = Metrics()
 
@@ -160,29 +162,43 @@ class AppMetrics:
 def main():
     """Main entry point"""
 
-    exporter_port = int(
-        os.getenv("EXPORTER_PORT", "9877"))
-    backup_name = str(
-        os.getenv("BACKUP_NAME", "duplicy_backup"))
-    last_metric_location =  str(
-        os.getenv("LAST_METRIC_LOCATION", "/home/duplicity/config/last_metrics"))
-    pre_backup_date_file =  str(
-        os.getenv("DATE_FILE_PRE_BACKUP", "/home/duplicity/backup/test/pre_backup"))
-    restored_date_file = str(
-        os.getenv("DATE_FILE_RESTORED", "/home/duplicity/backup/test/restore"))
-    backup_interval = int(
-        os.getenv("BACKUP_INTERVAL", ONE_DAY))
+    exporter_port = int(os.getenv("EXPORTER_PORT", "9877"))
 
     print("Starting Exporter on port: " + str(exporter_port))
 
-    app_metrics_params = AppMetricParams(
-        backup_name = backup_name,
-        last_metric_location = last_metric_location,
-        pre_backup_date_file = pre_backup_date_file,
-        restored_date_file = restored_date_file,
-        backup_interval = backup_interval
-    )
+    duplicity_connection_type = duplicity.DuplicityBackupMethod.UNKNOWN
+    if str(os.getenv("DUPLICITY_SERVER_CONNECTION_TYPE", "ssh")) == "False":
+        duplicity_connection_type = duplicity.DuplicityBackupMethod.SSH
 
+    ssh_params = duplicity.SSHParams(
+        host=str(os.getenv("DUPLICITY_SERVER_SSH_HOST", "192.168.1.1")),
+        port=int(os.getenv("DUPLICITY_SERVER_SSH_PORT", "22")),
+        user=str(os.getenv("DUPLICITY_SERVER_SSH_USER", "duplicity")),
+        key_file=str(os.getenv("DUPLICITY_SERVER_SSH_KEY_FILE", "/id_rsa"))
+    )
+    if str(os.getenv("DUPLICITY_SERVER_SSH_STRICT_HOST_KEY_CHECKING", "False")) == "False":
+        ssh_params.strict_host_key_checking = False
+    else:
+        ssh_params.strict_host_key_checking = True
+
+    duplicity_location_params = duplicity.DuplicityLocationParams(
+        pre_backup_date_file = str(
+            os.getenv("DATE_FILE_PRE_BACKUP", "/home/duplicity/backup/test/pre_backup")),
+        restored_date_file=str(
+            os.getenv("DATE_FILE_RESTORED", "/home/duplicity/backup/test/restore"))
+    )
+    duplicity_params = duplicity.DuplicityParams(
+        backup_name=str(os.getenv("BACKUP_NAME", "duplicity_backup")),
+        backup_method=duplicity_connection_type,
+        ssh_params=ssh_params,
+        location_params=duplicity_location_params
+    )
+    app_metrics_params = AppMetricParams(
+        duplicity_params = duplicity_params,
+        last_metric_location = str(
+            os.getenv("LAST_METRIC_LOCATION", "/home/duplicity/config/last_metrics")),
+        backup_interval = int(os.getenv("BACKUP_INTERVAL", ONE_DAY))
+    )
     app_metrics = AppMetrics(
         params=app_metrics_params
     )
