@@ -166,6 +166,9 @@ def main():
 
     print("Starting Exporter on port: " + str(exporter_port))
 
+    if str(os.getenv("PASSPHRASE", "")) == "":
+        raise Exception("PASSPHRASE not set!")
+
     duplicity_connection_type = duplicity.DuplicityBackupMethod.UNKNOWN
     connection_env = str(os.getenv("DUPLICITY_SERVER_CONNECTION_TYPE", "ssh")).lower()
     if connection_env == "ssh":

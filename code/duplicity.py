@@ -152,6 +152,8 @@ class Duplicity:
 
     def __capture_command_out(self, command:list, print_prefix="") -> list:
         """ Runs a command on the command line and returns output. """
+        if str(os.getenv("PASSPHRASE", "")) == "":
+            raise Exception("PASSPHRASE not set!")
         if print_prefix:
             print(print_prefix + "[Command]: " + " ".join(command))
         my_env = os.environ.copy()
