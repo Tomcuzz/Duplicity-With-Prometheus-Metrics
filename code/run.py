@@ -167,7 +167,8 @@ def main():
     print("Starting Exporter on port: " + str(exporter_port))
 
     duplicity_connection_type = duplicity.DuplicityBackupMethod.UNKNOWN
-    if str(os.getenv("DUPLICITY_SERVER_CONNECTION_TYPE", "ssh")) == "ssh":
+    connection_env = str(os.getenv("DUPLICITY_SERVER_CONNECTION_TYPE", "ssh")).lower()
+    if connection_env == "ssh":
         duplicity_connection_type = duplicity.DuplicityBackupMethod.SSH
 
     ssh_params = duplicity.SSHParams(

@@ -78,7 +78,7 @@ class Duplicity:
         """ Run backup and return metrics. """
         logs = self.__capture_command_out(
             command=self.__build_duplicity_command(),
-            print_output=True)
+            print_prefix="[Duplicity Ouput]")
         return self.__process_duplicity_logs(logs)
 
     def __build_duplicity_command(self) -> list:
@@ -90,7 +90,7 @@ class Duplicity:
             out.append("--verbosity=" + self.params.verbosity)
         if self.params.allow_source_mismatch:
             out.append("--allow-source-mismatch")
-        if self.params.backup_method == "ssh":
+        if self.params.backup_method == DuplicityBackupMethod.SSH:
             ssh_options = "--rsync-options='-e \"ssh "
             ssh_options += " -p " + self.params.ssh_params.port
             ssh_options += " -i " + self.params.ssh_params.key_file
@@ -115,16 +115,18 @@ class Duplicity:
         """ Run post backup processing. """
         return self.__read_duplicity_restore_test_file()
 
-    def __capture_command_out(self, command:list, print_output=False) -> list:
+    def __capture_command_out(self, command:list, print_prefix="") -> list:
         """ Runs a command on the command line and returns output. """
+        if print_prefix:
+            print(print_prefix + "[Command]: " + " ".join(command))
         proc = subprocess.Popen(command,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
         out = []
         while True:
             line = proc.stdout.readline()
             if not line:
                 break
-            if print_output:
-                print("[Duplicity Ouput]: " + line.decode('utf-8'))
+            if print_prefix:
+                print(print_prefix + ": " + line.decode('utf-8'))
             out.append(line.decode('utf-8'))
         return out
 
