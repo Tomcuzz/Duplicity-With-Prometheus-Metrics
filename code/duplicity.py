@@ -40,7 +40,7 @@ class DuplicityBackupMethod(Enum):
 class SSHParams():
     """Setup params for ssh params."""
     port:int = 22
-    key_file:str = "/id_rsa"
+    key_file:str = "/home/duplicity/config//id_rsa"
     user:str = "duplicity"
     host:str = "192.168.1.1"
     strict_host_key_checking:bool = False

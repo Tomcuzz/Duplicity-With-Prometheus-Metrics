@@ -178,7 +178,7 @@ def main():
         host=str(os.getenv("DUPLICITY_SERVER_SSH_HOST", "192.168.1.1")),
         port=int(os.getenv("DUPLICITY_SERVER_SSH_PORT", "22")),
         user=str(os.getenv("DUPLICITY_SERVER_SSH_USER", "duplicity")),
-        key_file=str(os.getenv("DUPLICITY_SERVER_SSH_KEY_FILE", "/id_rsa"))
+        key_file=str(os.getenv("DUPLICITY_SERVER_SSH_KEY_FILE", "/home/duplicity/config/id_rsa"))
     )
     ssh_params.strict_host_key_checking = (
         str(os.getenv("DUPLICITY_SERVER_SSH_STRICT_HOST_KEY_CHECKING", "False")) == "False")
