@@ -158,7 +158,6 @@ class AppMetrics:
         self.last_run_metrics.update(self.duplicity.run_post_backup())
         self.run_metric_save()
 
-
 def main():
     """Main entry point"""
 
@@ -168,6 +167,11 @@ def main():
 
     if str(os.getenv("PASSPHRASE", "")) == "":
         raise Exception("PASSPHRASE not set!")
+
+    if str(os.getenv("DUPLICITY_SERVER_SSH_KEY_SSH_KEY", "")) != "":
+        f = open(str(os.getenv("DUPLICITY_SERVER_SSH_KEY_FILE", "/home/duplicity/config/id_rsa")), "a")
+        f.write(str(os.getenv("DUPLICITY_SERVER_SSH_KEY_SSH_KEY", "")))
+        f.close()
 
     duplicity_connection_type = duplicity.DuplicityBackupMethod.UNKNOWN
     connection_env = str(os.getenv("DUPLICITY_SERVER_CONNECTION_TYPE", "ssh")).lower()
