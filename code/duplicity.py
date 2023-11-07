@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 from enum import Enum
 
+import os
 import copy
 import time
 import subprocess
@@ -153,7 +154,13 @@ class Duplicity:
         """ Runs a command on the command line and returns output. """
         if print_prefix:
             print(print_prefix + "[Command]: " + " ".join(command))
-        proc = subprocess.Popen(command,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        my_env = os.environ.copy()
+        proc = subprocess.Popen(
+            command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            env=my_env
+            )
         out = []
         while True:
             line = proc.stdout.readline()
