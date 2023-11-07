@@ -181,10 +181,11 @@ def main():
         str(os.getenv("DUPLICITY_SERVER_SSH_STRICT_HOST_KEY_CHECKING", "False")) == "False")
 
     duplicity_location_params = duplicity.DuplicityLocationParams(
-        pre_backup_date_file = str(
-            os.getenv("DATE_FILE_PRE_BACKUP", "/home/duplicity/backup/test/pre_backup")),
+        local_backup_path = "/home/duplicity/backup",
+        pre_backup_date_file=str(
+            os.getenv("DATE_FILE_PRE_BACKUP", "restore_test.txt")),
         restored_date_file=str(
-            os.getenv("DATE_FILE_RESTORED", "/home/duplicity/backup/test/restore")),
+            os.getenv("DATE_FILE_RESTORED", "/home/duplicity/config/restore_test.txt")),
         remote_path = str(
             os.getenv("DUPLICITY_SERVER_REMOTE_PATH", "/home/duplicity/backup"))
     )

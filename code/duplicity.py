@@ -48,6 +48,7 @@ class SSHParams():
 @dataclass
 class DuplicityLocationParams():
     """Setup params for duplicity location."""
+    local_backup_path:str = ""
     pre_backup_date_file:str = ""
     restored_date_file:str = ""
     remote_path:str = "/home/duplicity/backup"
@@ -111,8 +112,41 @@ class Duplicity:
             out.append(rsync_location)
         return out
 
+    def __build_duplicity_restore_test_command(self) -> list:
+        """ Build the duplicity restore test command. """
+        out = ["duplicity"]
+        out.append("--allow-source-mismatch")
+        out.append("--force")
+        out.append("--file-to-restore="+self.params.location_params.pre_backup_date_file)
+        if self.params.verbosity:
+            out.append("--verbosity=" + self.params.verbosity)
+        if self.params.backup_method == DuplicityBackupMethod.SSH:
+            ssh_options = "--rsync-options='-e \"ssh "
+            ssh_options += " -p " + self.params.ssh_params.port
+            ssh_options += " -i " + self.params.ssh_params.key_file
+            if self.params.ssh_params.strict_host_key_checking:
+                ssh_options += " -o StrictHostKeyChecking=yes"
+            else:
+                ssh_options += " -o StrictHostKeyChecking=no"
+            ssh_options += "\"'"
+            out.append(ssh_options)
+        out.append(" /home/duplicity/backup/data")
+        if self.params.backup_method == DuplicityBackupMethod.SSH:
+            rsync_location = "rsync://"
+            rsync_location += self.params.ssh_params.user
+            rsync_location += "@"
+            rsync_location += self.params.ssh_params.host
+            rsync_location += ":"
+            rsync_location += self.params.location_params.remote_path
+            out.append(rsync_location)
+        out.append(self.params.location_params.restored_date_file)
+        return out
+
     def run_post_backup(self):
         """ Run post backup processing. """
+        self.__capture_command_out(
+            command=self.__build_duplicity_restore_test_command(),
+            print_prefix="[Duplicity Restore Test Ouput]")
         return self.__read_duplicity_restore_test_file()
 
     def __capture_command_out(self, command:list, print_prefix="") -> list:
@@ -178,9 +212,11 @@ class Duplicity:
             "backup-test-file-date": 0,
             "backup-test-file-success": False,
         }
-        self.__capture_command_out(['date', '>', self.params.location_params.pre_backup_date_file])
+        pre_backup_date_file = self.params.location_params.local_backup_path
+        pre_backup_date_file += "/" + self.params.location_params.pre_backup_date_file
+        self.__capture_command_out(['date', '>', pre_backup_date_file])
 
-        out_temp = self.__read_date_file(self.params.location_params.pre_backup_date_file)
+        out_temp = self.__read_date_file(pre_backup_date_file)
         out["restore-file-read-success"] = out_temp[0]
         out["restore-file-date"] = out_temp[1]
 

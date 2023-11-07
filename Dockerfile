@@ -20,9 +20,9 @@ ENV DUPLICITY_ALLOW_SOURCE_MISMATCH = "True"
 
 # Create Environment veriable for storage locations.
 ENV LAST_METRIC_LOCATION="/home/duplicity/config/last_metrics"
-ENV DATE_FILE_PRE_BACKUP="/home/duplicity/backup/test/pre_backup"
-ENV DATE_FILE_RESTORED="/home/duplicity/backup/test/restore"
+ENV DATE_FILE_RESTORED="/home/duplicity/config/restore_test.txt"
 ENV DUPLICITY_SERVER_REMOTE_PATH="/home/duplicity/backup"
+ENV DATE_FILE_PRE_BACKUP="test/pre_backup.txt"
 
 # Duplicity backup server location.
 ENV DUPLICITY_SERVER_CONNECTION_TYPE="ssh"
