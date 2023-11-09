@@ -80,6 +80,7 @@ class AppMetrics:
         try:
             with open(self.params.last_metric_location, encoding="utf-8") as fp:
                 self.last_run_metrics = json.load(fp)
+                self.run_metric_save()
         except FileNotFoundError:
             print("No Previous Metrics Found")
 
