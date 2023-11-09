@@ -101,7 +101,7 @@ class Duplicity:
                 ssh_options += " -o StrictHostKeyChecking=no"
             ssh_options += "\"'"
             out.append(ssh_options)
-        out.append(" /home/duplicity/backup/data")
+        out.append("/home/duplicity/backup/data")
         if self.params.backup_method == DuplicityBackupMethod.SSH:
             rsync_location = "rsync://"
             rsync_location += self.params.ssh_params.user
@@ -130,7 +130,7 @@ class Duplicity:
                 ssh_options += " -o StrictHostKeyChecking=no"
             ssh_options += "\"'"
             out.append(ssh_options)
-        out.append(" /home/duplicity/backup/data")
+        out.append("/home/duplicity/backup/data")
         if self.params.backup_method == DuplicityBackupMethod.SSH:
             rsync_location = "rsync://"
             rsync_location += self.params.ssh_params.user
