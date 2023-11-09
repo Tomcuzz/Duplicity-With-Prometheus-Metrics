@@ -173,7 +173,7 @@ def main():
         str(os.getenv("DUPLICITY_SERVER_SSH_KEY_FILE", "/home/duplicity/config/id_rsa")))
     
     if connection_env == "ssh" and ssh_key_blank and not ssh_key_file_exists:
-        raise Exception("PASSPHRASE not set!")
+        raise Exception("No ssh key provided!")
 
     if not ssh_key_blank:
         f = open(str(os.getenv("DUPLICITY_SERVER_SSH_KEY_FILE", "/home/duplicity/config/id_rsa")), "a")
