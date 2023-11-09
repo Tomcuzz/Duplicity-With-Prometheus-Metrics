@@ -14,10 +14,10 @@ ONE_DAY = "86400"
 @dataclass
 class AppMetricParams:
     """ Needed Setup params for AppMetrics. """
-    backup_name:str = "duplicity"
-    duplicity_params:duplicity.DuplicityParams = field(default_factory=duplicity.DuplicityParams)
     last_metric_location:str
     backup_interval:int
+    backup_name:str = "duplicity"
+    duplicity_params:duplicity.DuplicityParams = field(default_factory=duplicity.DuplicityParams)
 
 @dataclass
 class Metrics:
