@@ -43,7 +43,7 @@ COPY . .
 RUN apt-get update
 
 # Install SSH
-RUN apt-get install openssh-clients -y
+RUN apt-get install openssh-client -y
 
 # Install duplicity
 RUN apt-get install duplicity -y
