@@ -77,8 +77,11 @@ class AppMetrics:
 
     def pre_start_load(self):
         """Pre-Start metric load"""
-        with open(self.params.last_metric_location, encoding="utf-8") as fp:
-            self.last_run_metrics = json.load(fp)
+        try:
+            with open(self.params.last_metric_location, encoding="utf-8") as fp:
+                self.last_run_metrics = json.load(fp)
+        except FileNotFoundError:
+            print("No Previous Metrics Found")
 
 
     def run_metric_save(self):
