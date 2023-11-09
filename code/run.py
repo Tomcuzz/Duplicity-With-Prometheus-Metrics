@@ -1,6 +1,6 @@
 """Application exporter"""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import os
 import time
@@ -14,7 +14,8 @@ ONE_DAY = "86400"
 @dataclass
 class AppMetricParams:
     """ Needed Setup params for AppMetrics. """
-    duplicity_params:duplicity.DuplicityParams = duplicity.DuplicityParams()
+    backup_name:str = "duplicity"
+    duplicity_params:duplicity.DuplicityParams = field(default_factory=duplicity.DuplicityParams)
     last_metric_location:str
     backup_interval:int
 
@@ -68,27 +69,15 @@ class AppMetrics:
     def __init__(
             self,
             params:AppMetricParams):
-        self.backup_name = params.backup_name
-        self.last_metric_location = params.last_metric_location
-        self.pre_backup_date_file = params.pre_backup_date_file
-        self.restored_date_file = params.restored_date_file
-        self.backup_interval = params.backup_interval
+        self.params = params
         print("Adding Metrics")
-        duplicity_location_params = duplicity.DuplicityLocationParams(
-            pre_backup_date_file=params.pre_backup_date_file,
-            restored_date_file=params.restored_date_file
-        )
-        duplicity_params = duplicity.DuplicityParams(
-            backup_name=params.backup_name,
-            location_params=duplicity_location_params
-        )
-        self.duplicity = duplicity.Duplicity(params=duplicity_params)
+        self.duplicity = duplicity.Duplicity(params=params.duplicity_params)
         self.last_run_metrics = {}
         self.metrics = Metrics()
 
     def pre_start_load(self):
         """Pre-Start metric load"""
-        with open(self.last_metric_location, encoding="utf-8") as fp:
+        with open(self.params.last_metric_location, encoding="utf-8") as fp:
             self.last_run_metrics = json.load(fp)
 
 
@@ -96,39 +85,39 @@ class AppMetrics:
         """Save metrics out to disk for container restart"""
          # Update Prometheus metrics with application metrics
         self.metrics.got_metrics.labels(
-            container_name=self.backup_name).state(str(self.last_run_metrics["getSuccess"]))
+            container_name=self.params.backup_name).state(str(self.last_run_metrics["getSuccess"]))
         if self.last_run_metrics["getSuccess"]:
             self.metrics.last_backup.labels(
-                container_name=self.backup_name).set(self.last_run_metrics["lastBackup"])
+                container_name=self.params.backup_name).set(self.last_run_metrics["lastBackup"])
             self.metrics.time_since_backup.labels(
-                container_name=self.backup_name).set(self.last_run_metrics["timeSinceBackup"])
+                container_name=self.params.backup_name).set(self.last_run_metrics["timeSinceBackup"])
             self.metrics.errors.labels(
-                container_name=self.backup_name).set(self.last_run_metrics["errors"])
+                container_name=self.params.backup_name).set(self.last_run_metrics["errors"])
             self.metrics.new_files.labels(
-                container_name=self.backup_name).set(self.last_run_metrics["files"]["new"])
+                container_name=self.params.backup_name).set(self.last_run_metrics["files"]["new"])
             self.metrics.deleted_files.labels(
-                container_name=self.backup_name).set(self.last_run_metrics["files"]["deleted"])
+                container_name=self.params.backup_name).set(self.last_run_metrics["files"]["deleted"])
             self.metrics.changed_files.labels(
-                container_name=self.backup_name).set(self.last_run_metrics["files"]["changed"])
+                container_name=self.params.backup_name).set(self.last_run_metrics["files"]["changed"])
             self.metrics.delta_entries.labels(
-                container_name=self.backup_name).set(self.last_run_metrics["files"]["delta"])
+                container_name=self.params.backup_name).set(self.last_run_metrics["files"]["delta"])
             self.metrics.raw_delta_size.labels(
-                container_name=self.backup_name).set(self.last_run_metrics["size"]["rawDelta"])
+                container_name=self.params.backup_name).set(self.last_run_metrics["size"]["rawDelta"])
             self.metrics.changed_file_size.labels(
-                container_name=self.backup_name).set(self.last_run_metrics["size"]["changedFiles"])
+                container_name=self.params.backup_name).set(self.last_run_metrics["size"]["changedFiles"])
             self.metrics.source_file_size.labels(
-                container_name=self.backup_name).set(self.last_run_metrics["size"]["sourceFile"])
+                container_name=self.params.backup_name).set(self.last_run_metrics["size"]["sourceFile"])
             self.metrics.total_destination_size_change.labels(
-                container_name=self.backup_name).set(
+                container_name=self.params.backup_name).set(
                     self.last_run_metrics["size"]["totalDestChange"])
 
         if self.last_run_metrics["backup-test-file-success"]:
             self.metrics.pre_backup_date_file_last_backup.labels(
-                container_name=self.backup_name).set(self.last_run_metrics["backup-test-file-date"])
+                container_name=self.params.backup_name).set(self.last_run_metrics["backup-test-file-date"])
         if self.last_run_metrics["restore-file-read-success"]:
             self.metrics.restored_date_file_last_restore_date.labels(
-                container_name=self.backup_name).set(self.last_run_metrics["restore-file-date"])
-        with open(self.last_metric_location, 'w', encoding="utf-8") as fp:
+                container_name=self.params.backup_name).set(self.last_run_metrics["restore-file-date"])
+        with open(self.params.last_metric_location, 'w', encoding="utf-8") as fp:
             json.dump(self.last_run_metrics, fp)
 
 
@@ -141,7 +130,7 @@ class AppMetrics:
             self.process_backup()
             time.sleep(10)
             self.process_post_backup_date_read()
-            time.sleep(self.backup_interval)
+            time.sleep(self.params.backup_interval)
 
     def process_pre_backup_date_write(self):
         """Run pre-backup restore date file write and save/export metric."""
@@ -197,7 +186,6 @@ def main():
             os.getenv("DUPLICITY_SERVER_REMOTE_PATH", "/home/duplicity/backup"))
     )
     duplicity_params = duplicity.DuplicityParams(
-        backup_name=str(os.getenv("BACKUP_NAME", "duplicity_backup")),
         full_if_older_than=str(os.getenv("DUPLICITY_FULL_IF_OLDER_THAN", "")),
         verbosity=str(os.getenv("DUPLICITY_VERBOSITY", "")),
         location_params=duplicity_location_params,
@@ -206,6 +194,7 @@ def main():
         ssh_params=ssh_params
     )
     app_metrics_params = AppMetricParams(
+        backup_name=str(os.getenv("BACKUP_NAME", "duplicity_backup")),
         duplicity_params = duplicity_params,
         last_metric_location = str(
             os.getenv("LAST_METRIC_LOCATION", "/home/duplicity/config/last_metrics")),

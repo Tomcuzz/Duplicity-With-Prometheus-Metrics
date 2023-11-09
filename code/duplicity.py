@@ -58,7 +58,6 @@ class DuplicityLocationParams():
 @dataclass
 class DuplicityParams:
     """Setup params for dupliciy class."""
-    backup_name:str = "duplicity"
     location_params:DuplicityLocationParams = field(default_factory=DuplicityLocationParams)
     full_if_older_than:str = ""
     verbosity:str = ""
