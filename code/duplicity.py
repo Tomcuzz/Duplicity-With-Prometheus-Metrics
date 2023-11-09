@@ -1,6 +1,6 @@
 """Duplicity healper"""
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
 
 import os
@@ -59,7 +59,7 @@ class DuplicityLocationParams():
 class DuplicityParams:
     """Setup params for dupliciy class."""
     backup_name:str = "duplicity"
-    location_params:DuplicityLocationParams = field(default_factory=DuplicityLocationParams())
+    location_params:DuplicityLocationParams
     full_if_older_than:str = ""
     verbosity:str = ""
     allow_source_mismatch:bool = True
