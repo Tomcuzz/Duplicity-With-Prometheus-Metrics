@@ -163,15 +163,22 @@ def main():
     if str(os.getenv("PASSPHRASE", "")) == "":
         raise Exception("PASSPHRASE not set!")
 
-    if str(os.getenv("DUPLICITY_SERVER_SSH_KEY_SSH_KEY", "")) != "":
-        f = open(str(os.getenv("DUPLICITY_SERVER_SSH_KEY_FILE", "/home/duplicity/config/id_rsa")), "a")
-        f.write(str(os.getenv("DUPLICITY_SERVER_SSH_KEY_SSH_KEY", "")))
-        f.close()
-
     duplicity_connection_type = duplicity.DuplicityBackupMethod.UNKNOWN
     connection_env = str(os.getenv("DUPLICITY_SERVER_CONNECTION_TYPE", "ssh")).lower()
     if connection_env == "ssh":
         duplicity_connection_type = duplicity.DuplicityBackupMethod.SSH
+
+    ssh_key_blank = (str(os.getenv("DUPLICITY_SERVER_SSH_KEY_SSH_KEY", "")) == "")
+    ssh_key_file_exists = os.path.isfile(
+        str(os.getenv("DUPLICITY_SERVER_SSH_KEY_FILE", "/home/duplicity/config/id_rsa")))
+    
+    if connection_env == "ssh" and ssh_key_blank and not ssh_key_file_exists:
+        raise Exception("PASSPHRASE not set!")
+
+    if not ssh_key_blank:
+        f = open(str(os.getenv("DUPLICITY_SERVER_SSH_KEY_FILE", "/home/duplicity/config/id_rsa")), "a")
+        f.write(str(os.getenv("DUPLICITY_SERVER_SSH_KEY_SSH_KEY", "")))
+        f.close()
 
     ssh_params = duplicity.SSHParams(
         host=str(os.getenv("DUPLICITY_SERVER_SSH_HOST", "192.168.1.1")),
