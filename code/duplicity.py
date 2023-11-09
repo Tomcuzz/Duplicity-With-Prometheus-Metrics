@@ -170,6 +170,11 @@ class Duplicity:
             if print_prefix:
                 print(print_prefix + ": " + line.decode('utf-8'))
             out.append(line.decode('utf-8'))
+        while True:
+            line = proc.stderr.readline()
+            if not line:
+                break
+            print(print_prefix + "[COMMAND ERROR]" + ": " + line.decode('utf-8'))
         return out
 
     def __process_duplicity_logs(self, log_output:list) -> dict:
