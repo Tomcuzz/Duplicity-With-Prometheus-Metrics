@@ -46,24 +46,20 @@ class SSHParams():
     strict_host_key_checking:bool = False
 
 
-# @dataclass
-# class DuplicityLocationParams():
-#     """Setup params for duplicity location."""
-#     local_backup_path:str = ""
-#     pre_backup_date_file:str = ""
-#     restored_date_file:str = ""
-#     remote_path:str = "/home/duplicity/backup"
+@dataclass
+class DuplicityLocationParams():
+    """Setup params for duplicity location."""
+    local_backup_path:str = ""
+    pre_backup_date_file:str = ""
+    restored_date_file:str = ""
+    remote_path:str = "/home/duplicity/backup"
 
 
 @dataclass
 class DuplicityParams:
     """Setup params for dupliciy class."""
     backup_name:str = "duplicity"
-    local_backup_path:str = ""
-    pre_backup_date_file:str = ""
-    restored_date_file:str = ""
-    remote_path:str = "/home/duplicity/backup"
-    # location_params:DuplicityLocationParams = field(default_factory=DuplicityLocationParams)
+    location_params:DuplicityLocationParams = field(defailt_factory=DuplicityLocationParams())
     full_if_older_than:str = ""
     verbosity:str = ""
     allow_source_mismatch:bool = True
@@ -113,7 +109,7 @@ class Duplicity:
             rsync_location += "@"
             rsync_location += self.params.ssh_params.host
             rsync_location += ":"
-            rsync_location += self.params.remote_path
+            rsync_location += self.params.location_params.remote_path
             out.append(rsync_location)
         return out
 
@@ -122,7 +118,7 @@ class Duplicity:
         out = ["duplicity"]
         out.append("--allow-source-mismatch")
         out.append("--force")
-        out.append("--file-to-restore="+self.params.pre_backup_date_file)
+        out.append("--file-to-restore="+self.params.location_params.pre_backup_date_file)
         if self.params.verbosity:
             out.append("--verbosity=" + self.params.verbosity)
         if self.params.backup_method == DuplicityBackupMethod.SSH:
@@ -142,9 +138,9 @@ class Duplicity:
             rsync_location += "@"
             rsync_location += self.params.ssh_params.host
             rsync_location += ":"
-            rsync_location += self.params.remote_path
+            rsync_location += self.params.location_params.remote_path
             out.append(rsync_location)
-        out.append(self.params.restored_date_file)
+        out.append(self.params.location_params.restored_date_file)
         return out
 
     def run_post_backup(self):
@@ -225,8 +221,8 @@ class Duplicity:
             "backup-test-file-date": 0,
             "backup-test-file-success": False,
         }
-        pre_backup_date_file = self.params.local_backup_path
-        pre_backup_date_file += "/" + self.params.pre_backup_date_file
+        pre_backup_date_file = self.params.location_params.local_backup_path
+        pre_backup_date_file += "/" + self.params.location_params.pre_backup_date_file
         self.__capture_command_out(['date', '>', pre_backup_date_file])
 
         out_temp = self.__read_date_file(pre_backup_date_file)
@@ -241,7 +237,7 @@ class Duplicity:
             "restore-file-date": 0,
             "restore-file-read-success": False
         }
-        out_temp = self.__read_date_file(self.params.restored_date_file)
+        out_temp = self.__read_date_file(self.params.location_params.restored_date_file)
         out["restore-file-read-success"] = out_temp[0]
         out["restore-file-date"] = out_temp[1]
 
