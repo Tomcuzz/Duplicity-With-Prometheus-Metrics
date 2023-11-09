@@ -74,13 +74,15 @@ class AppMetrics:
         self.restored_date_file = params.restored_date_file
         self.backup_interval = params.backup_interval
         print("Adding Metrics")
-        duplicity_location_params = duplicity.DuplicityLocationParams(
-            pre_backup_date_file=params.pre_backup_date_file,
-            restored_date_file=params.restored_date_file
-        )
+        # duplicity_location_params = duplicity.DuplicityLocationParams(
+        #     pre_backup_date_file=params.pre_backup_date_file,
+        #     restored_date_file=params.restored_date_file
+        # )
         duplicity_params = duplicity.DuplicityParams(
             backup_name=params.backup_name,
-            location_params=duplicity_location_params
+            pre_backup_date_file=params.pre_backup_date_file,
+            restored_date_file=params.restored_date_file
+            # location_params=duplicity_location_params
         )
         self.duplicity = duplicity.Duplicity(params=duplicity_params)
         self.last_run_metrics = {}
@@ -187,20 +189,27 @@ def main():
     ssh_params.strict_host_key_checking = (
         str(os.getenv("DUPLICITY_SERVER_SSH_STRICT_HOST_KEY_CHECKING", "False")) == "False")
 
-    duplicity_location_params = duplicity.DuplicityLocationParams(
+    # duplicity_location_params = duplicity.DuplicityLocationParams(
+    #     local_backup_path = "/home/duplicity/backup",
+    #     pre_backup_date_file=str(
+    #         os.getenv("DATE_FILE_PRE_BACKUP", "restore_test.txt")),
+    #     restored_date_file=str(
+    #         os.getenv("DATE_FILE_RESTORED", "/home/duplicity/config/restore_test.txt")),
+    #     remote_path = str(
+    #         os.getenv("DUPLICITY_SERVER_REMOTE_PATH", "/home/duplicity/backup"))
+    # )
+    duplicity_params = duplicity.DuplicityParams(
+        backup_name=str(os.getenv("BACKUP_NAME", "duplicity_backup")),
+        full_if_older_than=str(os.getenv("DUPLICITY_FULL_IF_OLDER_THAN", "")),
+        verbosity=str(os.getenv("DUPLICITY_VERBOSITY", "")),
         local_backup_path = "/home/duplicity/backup",
         pre_backup_date_file=str(
             os.getenv("DATE_FILE_PRE_BACKUP", "restore_test.txt")),
         restored_date_file=str(
             os.getenv("DATE_FILE_RESTORED", "/home/duplicity/config/restore_test.txt")),
         remote_path = str(
-            os.getenv("DUPLICITY_SERVER_REMOTE_PATH", "/home/duplicity/backup"))
-    )
-    duplicity_params = duplicity.DuplicityParams(
-        backup_name=str(os.getenv("BACKUP_NAME", "duplicity_backup")),
-        full_if_older_than=str(os.getenv("DUPLICITY_FULL_IF_OLDER_THAN", "")),
-        verbosity=str(os.getenv("DUPLICITY_VERBOSITY", "")),
-        location_params=duplicity_location_params,
+            os.getenv("DUPLICITY_SERVER_REMOTE_PATH", "/home/duplicity/backup")),
+        # location_params=duplicity_location_params,
         backup_method=duplicity_connection_type,
         allow_source_mismatch=(str(os.getenv("DUPLICITY_ALLOW_SOURCE_MISMATCH", "True")) == "True"),
         ssh_params=ssh_params
