@@ -187,7 +187,7 @@ def main():
         key_file=str(os.getenv("DUPLICITY_SERVER_SSH_KEY_FILE", "/home/duplicity/config/id_rsa"))
     )
     ssh_params.strict_host_key_checking = (
-        str(os.getenv("DUPLICITY_SERVER_SSH_STRICT_HOST_KEY_CHECKING", "False")) == "False")
+        str(os.getenv("DUPLICITY_SERVER_SSH_STRICT_HOST_KEY_CHECKING", "False")) == "True")
 
     duplicity_location_params = duplicity.DuplicityLocationParams(
         local_backup_path = "/home/duplicity/backup",
