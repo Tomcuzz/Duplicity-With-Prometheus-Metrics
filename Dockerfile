@@ -2,7 +2,7 @@
 FROM python:3
 
 #Expose the nessasary volumes
-VOLUME ["/home/duplicity/backup/data", "/home/duplicity/config"]
+VOLUME ["/home/duplicity/backup/data", "/home/duplicity/config", "/home/duplicity/.cache", "/home/duplicity/.gnupg"]
 
 # Create Enviroment Veriables for exporter
 ENV EXPORTER_PORT="9877"
