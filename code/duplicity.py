@@ -227,6 +227,7 @@ class Duplicity:
         out_temp = self.__read_date_file(self.params.location_params.restored_date_file)
         out["restore-file-read-success"] = out_temp[0]
         out["restore-file-date"] = out_temp[1]
+        return out
 
     def __read_date_file(self, location:str) -> (bool, int):
         """ Read and process a date file. """
