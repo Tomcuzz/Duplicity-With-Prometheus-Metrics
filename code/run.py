@@ -138,9 +138,8 @@ class AppMetrics:
 
     def process_pre_backup_date_write(self):
         """Run pre-backup restore date file write and save/export metric."""
-        if self.last_run_metrics:
-            self.last_run_metrics.update(self.duplicity.run_pre_backup())
-            self.run_metric_save()
+        self.last_run_metrics.update(self.duplicity.run_pre_backup())
+        self.run_metric_save()
 
     def process_backup(self):
         """Run backup and save/export metric."""
