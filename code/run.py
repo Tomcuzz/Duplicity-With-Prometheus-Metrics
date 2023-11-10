@@ -185,9 +185,7 @@ def main():
         os.chmod(
             ssh_key_path,
             stat.S_IRUSR |
-            stat.S_IWUSR |
-            stat.S_IRGRP |
-            stat.S_IWGRP
+            stat.S_IWUSR
         )
 
     ssh_params = duplicity.SSHParams(
