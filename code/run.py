@@ -72,9 +72,10 @@ class AppMetrics:
             params:AppMetricParams):
         self.params = params
         print("Adding Metrics")
-        self.duplicity = duplicity.Duplicity(params=params.duplicity_params)
         self.last_run_metrics = {}
         self.metrics = Metrics()
+        self.duplicity = duplicity.Duplicity(params=params.duplicity_params)
+        self.last_run_metrics = copy.deepcopy(duplicity.metric_template)
 
     def pre_start_load(self):
         """Pre-Start metric load"""
@@ -83,7 +84,6 @@ class AppMetrics:
                 self.last_run_metrics = json.load(fp)
         except FileNotFoundError:
             print("No Previous Metrics Found")
-            self.last_run_metrics = copy.deepcopy(duplicity.metric_template)
 
 
     def run_metric_save(self):
