@@ -216,7 +216,6 @@ class Duplicity:
         out_temp = self.__read_date_file(pre_backup_date_file)
         out["restore-file-read-success"] = out_temp[0]
         out["restore-file-date"] = out_temp[1]
-
         return out
 
     def __read_duplicity_restore_test_file(self) -> dict:
