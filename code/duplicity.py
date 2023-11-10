@@ -92,7 +92,7 @@ class Duplicity:
         if self.params.allow_source_mismatch:
             out.append("--allow-source-mismatch")
         if self.params.backup_method == DuplicityBackupMethod.SSH:
-            ssh_options = "--rsync-options='-e \"/usr/bin/ssh"
+            ssh_options = "--rsync-options='-e \"ssh"
             ssh_options += " -p " + str(self.params.ssh_params.port)
             ssh_options += " -i " + self.params.ssh_params.key_file
             if self.params.ssh_params.strict_host_key_checking:
@@ -121,7 +121,7 @@ class Duplicity:
         if self.params.verbosity:
             out.append("--verbosity=" + self.params.verbosity)
         if self.params.backup_method == DuplicityBackupMethod.SSH:
-            ssh_options = "--rsync-options='-e \"/usr/bin/ssh"
+            ssh_options = "--rsync-options='-e \"ssh"
             ssh_options += " -p " + str(self.params.ssh_params.port)
             ssh_options += " -i " + self.params.ssh_params.key_file
             if self.params.ssh_params.strict_host_key_checking:
