@@ -140,8 +140,8 @@ class AppMetrics:
                 print("14")
             with open(self.params.last_metric_location, 'w', encoding="utf-8") as fp:
                 json.dump(self.last_run_metrics, "w+", fp)
-        except ValueError as e:
-            print("run_metric_save: Value Error, " + e)
+        except ValueError:
+            print("run_metric_save: Value Error")
             print(last_run_metrics)
 
     def run_loop(self):
