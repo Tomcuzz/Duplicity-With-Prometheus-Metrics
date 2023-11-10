@@ -190,6 +190,8 @@ def main():
         str(os.getenv("DUPLICITY_SERVER_SSH_STRICT_HOST_KEY_CHECKING", "False")) == "True")
 
     if duplicity_connection_type == duplicity.DuplicityBackupMethod.SSH:
+        if not os.path.exists("/home/duplicity/.ssh"):
+            os.makedirs("/home/duplicity/.ssh")
         with open("/home/duplicity/.ssh/config", encoding="utf-8") as fp:
                 fp.write("Host " + ssh_params.host + "\\n")
                 fp.write("  HostName " + str(ssh_params.port) + "\\n")
