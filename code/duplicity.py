@@ -85,6 +85,7 @@ class Duplicity:
     def __build_duplicity_command(self) -> list:
         """ Build the duplicity command. """
         out = ["duplicity"]
+        out.append("--allow-source-mismatch")
         if self.params.full_if_older_than:
             out.append("--full-if-older-than=" + self.params.full_if_older_than)
         if self.params.verbosity:

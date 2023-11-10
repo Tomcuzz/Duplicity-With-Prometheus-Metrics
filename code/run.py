@@ -90,37 +90,51 @@ class AppMetrics:
             # Update Prometheus metrics with application metrics
             self.metrics.got_metrics.labels(
                 container_name=self.params.backup_name).state(str(self.last_run_metrics["getSuccess"]))
+            print("1")
             if self.last_run_metrics["getSuccess"]:
                 self.metrics.last_backup.labels(
                     container_name=self.params.backup_name).set(self.last_run_metrics["lastBackup"])
+                print("2")
                 self.metrics.time_since_backup.labels(
                     container_name=self.params.backup_name).set(self.last_run_metrics["timeSinceBackup"])
+                print("3")
                 self.metrics.errors.labels(
                     container_name=self.params.backup_name).set(self.last_run_metrics["errors"])
+                print("4")
                 self.metrics.new_files.labels(
                     container_name=self.params.backup_name).set(self.last_run_metrics["files"]["new"])
+                print("5")
                 self.metrics.deleted_files.labels(
                     container_name=self.params.backup_name).set(self.last_run_metrics["files"]["deleted"])
+                print("6")
                 self.metrics.changed_files.labels(
                     container_name=self.params.backup_name).set(self.last_run_metrics["files"]["changed"])
+                print("7")
                 self.metrics.delta_entries.labels(
                     container_name=self.params.backup_name).set(self.last_run_metrics["files"]["delta"])
+                print("8")
                 self.metrics.raw_delta_size.labels(
                     container_name=self.params.backup_name).set(self.last_run_metrics["size"]["rawDelta"])
+                print("9")
                 self.metrics.changed_file_size.labels(
                     container_name=self.params.backup_name).set(self.last_run_metrics["size"]["changedFiles"])
+                print("10")
                 self.metrics.source_file_size.labels(
                     container_name=self.params.backup_name).set(self.last_run_metrics["size"]["sourceFile"])
+                print("11")
                 self.metrics.total_destination_size_change.labels(
                     container_name=self.params.backup_name).set(
                         self.last_run_metrics["size"]["totalDestChange"])
+                print("12")
 
             if self.last_run_metrics["backup-test-file-success"]:
                 self.metrics.pre_backup_date_file_last_backup.labels(
                     container_name=self.params.backup_name).set(self.last_run_metrics["backup-test-file-date"])
+                print("13")
             if self.last_run_metrics["restore-file-read-success"]:
                 self.metrics.restored_date_file_last_restore_date.labels(
                     container_name=self.params.backup_name).set(self.last_run_metrics["restore-file-date"])
+                print("14")
             with open(self.params.last_metric_location, 'w', encoding="utf-8") as fp:
                 json.dump(self.last_run_metrics, "w+", fp)
         except ValueError:
