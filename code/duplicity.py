@@ -8,6 +8,7 @@ import copy
 import time
 import subprocess
 
+import pytz
 from datetime import datetime
 
 metric_template = {
@@ -210,7 +211,7 @@ class Duplicity:
         
         pre_backup_date_file += "/" + self.params.location_params.pre_backup_date_file
         with open(pre_backup_date_file, "w+", encoding="utf-8") as fp:
-                fp.write(datetime.today().strftime("%a %d %b %H:%M:%S %Z %Y"))
+            fp.write(datetime.now(pytz.utc).strftime("%a %d %b %H:%M:%S %Z %Y"))
 
         out_temp = self.__read_date_file(pre_backup_date_file)
         out["restore-file-read-success"] = out_temp[0]
