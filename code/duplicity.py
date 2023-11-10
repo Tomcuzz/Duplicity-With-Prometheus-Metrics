@@ -85,16 +85,16 @@ class Duplicity:
     def __build_duplicity_command(self) -> list:
         """ Build the duplicity command. """
         out = ["duplicity"]
-        if self.params.backup_method == DuplicityBackupMethod.SSH:
-            ssh_options = "--rsync-options='\"ssh"
-            ssh_options += " -p " + str(self.params.ssh_params.port)
-            ssh_options += " -i " + self.params.ssh_params.key_file
-            if self.params.ssh_params.strict_host_key_checking:
-                ssh_options += " -o=StrictHostKeyChecking=yes"
-            else:
-                ssh_options += " -o=StrictHostKeyChecking=no"
-            ssh_options += "\"'"
-            out.append(ssh_options)
+        # if self.params.backup_method == DuplicityBackupMethod.SSH:
+        #     ssh_options = "--rsync-options='-e \"ssh"
+        #     ssh_options += " -p " + str(self.params.ssh_params.port)
+        #     ssh_options += " -i " + self.params.ssh_params.key_file
+        #     if self.params.ssh_params.strict_host_key_checking:
+        #         ssh_options += " -o=StrictHostKeyChecking=yes"
+        #     else:
+        #         ssh_options += " -o=StrictHostKeyChecking=no"
+        #     ssh_options += "\"'"
+        #     out.append(ssh_options)
         if self.params.full_if_older_than:
             out.append("--full-if-older-than=" + self.params.full_if_older_than)
         if self.params.verbosity:

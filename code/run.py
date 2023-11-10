@@ -189,6 +189,23 @@ def main():
     ssh_params.strict_host_key_checking = (
         str(os.getenv("DUPLICITY_SERVER_SSH_STRICT_HOST_KEY_CHECKING", "False")) == "True")
 
+    if duplicity_connection_type == DuplicityBackupMethod.SSH:
+        with open("/home/duplicity/.ssh/config", encoding="utf-8") as fp:
+                fp.write("Host " + ssh_params.host + "\\n")
+                fp.write("  HostName " + str(ssh_params.port) + "\\n")
+                fp.write("  Port " + ssh_params.host + "\\n")
+                fp.write("  User " + ssh_params.user + "\\n")
+                fp.write("  IdentityFile " + ssh_params.key_file + "\\n")
+        # ssh_options = "--rsync-options='-e \"ssh"
+        # ssh_options += " -p " + str(self.params.ssh_params.port)
+        # ssh_options += " -i " + self.params.ssh_params.key_file
+        # if self.params.ssh_params.strict_host_key_checking:
+        #     ssh_options += " -o=StrictHostKeyChecking=yes"
+        # else:
+        #     ssh_options += " -o=StrictHostKeyChecking=no"
+        # ssh_options += "\"'"
+        # out.append(ssh_options)
+
     duplicity_location_params = duplicity.DuplicityLocationParams(
         local_backup_path = "/home/duplicity/backup",
         pre_backup_date_file=str(
