@@ -11,7 +11,8 @@ import subprocess
 from datetime import datetime
 
 metric_template = {
-    "running":           False,
+    "running":              False,
+    "getSuccess":           False,
     "lastBackup":           0,
     "elapseTime":           0,
     "timeSinceBackup":      0,

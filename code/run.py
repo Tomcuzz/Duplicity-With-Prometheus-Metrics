@@ -3,6 +3,7 @@
 from dataclasses import dataclass, field
 
 import os
+import copy
 import time
 import json
 from prometheus_client import start_http_server, Gauge, Enum
@@ -81,6 +82,7 @@ class AppMetrics:
             with open(self.params.last_metric_location, encoding="utf-8") as fp:
                 self.last_run_metrics = json.load(fp)
         except FileNotFoundError:
+            self.last_run_metrics = copy.deepcopy(duplicity.metric_template)
             print("No Previous Metrics Found")
 
 
