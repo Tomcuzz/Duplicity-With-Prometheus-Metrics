@@ -192,16 +192,16 @@ def main():
     if duplicity_connection_type == duplicity.DuplicityBackupMethod.SSH:
         if not os.path.exists("/home/duplicity/.ssh"):
             os.makedirs("/home/duplicity/.ssh")
-        with open("/home/duplicity/.ssh/config", encoding="utf-8") as fp:
-                fp.write("Host " + ssh_params.host + "\\n")
-                fp.write("  HostName " + str(ssh_params.port) + "\\n")
-                fp.write("  Port " + ssh_params.host + "\\n")
-                fp.write("  User " + ssh_params.user + "\\n")
-                fp.write("  IdentityFile " + ssh_params.key_file + "\\n")
+        with open("/home/duplicity/.ssh/config", "w+", encoding="utf-8") as fp:
+                fp.write("Host " + ssh_params.host + "\r\n")
+                fp.write("  HostName " + str(ssh_params.port) + "\r\n")
+                fp.write("  Port " + ssh_params.host + "\r\n")
+                fp.write("  User " + ssh_params.user + "\r\n")
+                fp.write("  IdentityFile " + ssh_params.key_file + "\r\n")
                 if ssh_params.strict_host_key_checking:
-                    fp.write("  StrictHostKeyChecking yes\\n")
+                    fp.write("  StrictHostKeyChecking yes\r\n")
                 else:
-                    fp.write("  StrictHostKeyChecking no\\n")
+                    fp.write("  StrictHostKeyChecking no\r\n")
 
     duplicity_location_params = duplicity.DuplicityLocationParams(
         local_backup_path = "/home/duplicity/backup",
