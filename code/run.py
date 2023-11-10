@@ -181,7 +181,7 @@ def main():
         f = open(ssh_key_path, "w+")
         f.write(str(os.getenv("DUPLICITY_SERVER_SSH_KEY_SSH_KEY", "")))
         f.close()
-        os.chmod(ssh_key_path, 700)
+        os.chmod(ssh_key_path, 660)
 
     ssh_params = duplicity.SSHParams(
         host=str(os.getenv("DUPLICITY_SERVER_SSH_HOST", "192.168.1.1")),
