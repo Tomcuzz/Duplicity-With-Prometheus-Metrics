@@ -166,15 +166,19 @@ def main():
     if connection_env == "ssh":
         duplicity_connection_type = duplicity.DuplicityBackupMethod.SSH
 
-    ssh_key_blank = (str(os.getenv("DUPLICITY_SERVER_SSH_KEY_SSH_KEY", "")) == "")
-    ssh_key_file_exists = os.path.isfile(
-        str(os.getenv("DUPLICITY_SERVER_SSH_KEY_FILE", "/home/duplicity/config/id_rsa")))
+    ssh_key_string = str(os.getenv("DUPLICITY_SERVER_SSH_KEY_SSH_KEY", ""))
+    ssh_key_blank = (ssh_key_string == "")
+    ssh_key_path = str(os.getenv("DUPLICITY_SERVER_SSH_KEY_FILE", "/home/duplicity/config/id_rsa"))
+    ssh_key_file_exists = os.path.isfile(ssh_key_path)
     
     if connection_env == "ssh" and ssh_key_blank and not ssh_key_file_exists:
         raise Exception("No ssh key provided!")
 
     if not ssh_key_blank:
-        f = open(str(os.getenv("DUPLICITY_SERVER_SSH_KEY_FILE", "/home/duplicity/config/id_rsa")), "a")
+        ssh_key_path_directory = os.path.abspath(os.path.join(ssh_key_path, os.pardir))
+        if not os.path.exists(ssh_key_path_directory):
+            os.makedirs(ssh_key_ssh_key_path_directorypath, exist_ok=True)
+        f = open(ssh_key_path, "w+")
         f.write(str(os.getenv("DUPLICITY_SERVER_SSH_KEY_SSH_KEY", "")))
         f.close()
 
@@ -182,14 +186,14 @@ def main():
         host=str(os.getenv("DUPLICITY_SERVER_SSH_HOST", "192.168.1.1")),
         port=int(os.getenv("DUPLICITY_SERVER_SSH_PORT", "22")),
         user=str(os.getenv("DUPLICITY_SERVER_SSH_USER", "duplicity")),
-        key_file=str(os.getenv("DUPLICITY_SERVER_SSH_KEY_FILE", "/home/duplicity/config/id_rsa"))
+        key_file=ssh_key_path
     )
     ssh_params.strict_host_key_checking = (
         str(os.getenv("DUPLICITY_SERVER_SSH_STRICT_HOST_KEY_CHECKING", "False")) == "True")
 
     if duplicity_connection_type == duplicity.DuplicityBackupMethod.SSH:
         if not os.path.exists("/home/duplicity/.ssh"):
-            os.makedirs("/home/duplicity/.ssh")
+            os.makedirs("/home/duplicity/.ssh", exist_ok=True)
         with open("/home/duplicity/.ssh/config", "w+", encoding="utf-8") as fp:
                 fp.write("Host " + ssh_params.host + "\r\n")
                 fp.write("  HostName " + ssh_params.host + "\r\n")
