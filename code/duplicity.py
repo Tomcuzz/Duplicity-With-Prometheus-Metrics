@@ -85,6 +85,10 @@ class Duplicity:
     def __build_duplicity_command(self) -> list:
         """ Build the duplicity command. """
         out = ["duplicity"]
+        if self.params.full_if_older_than:
+            out.append("--full-if-older-than=" + self.params.full_if_older_than)
+        if self.params.verbosity:
+            out.append("--verbosity=" + self.params.verbosity)
         # if self.params.backup_method == DuplicityBackupMethod.SSH:
         #     ssh_options = "--rsync-options='-e \"ssh"
         #     ssh_options += " -p " + str(self.params.ssh_params.port)
@@ -95,17 +99,12 @@ class Duplicity:
         #         ssh_options += " -o=StrictHostKeyChecking=no"
         #     ssh_options += "\"'"
         #     out.append(ssh_options)
-        if self.params.full_if_older_than:
-            out.append("--full-if-older-than=" + self.params.full_if_older_than)
-        if self.params.verbosity:
-            out.append("--verbosity=" + self.params.verbosity)
         out.append("/home/duplicity/backup/data")
         if self.params.backup_method == DuplicityBackupMethod.SSH:
             rsync_location = "rsync://"
             rsync_location += self.params.ssh_params.user
             rsync_location += "@"
             rsync_location += self.params.ssh_params.host
-            rsync_location += ":"
             rsync_location += self.params.location_params.remote_path
             out.append(rsync_location)
         return out
@@ -118,22 +117,21 @@ class Duplicity:
         out.append("--file-to-restore="+self.params.location_params.pre_backup_date_file)
         if self.params.verbosity:
             out.append("--verbosity=" + self.params.verbosity)
-        if self.params.backup_method == DuplicityBackupMethod.SSH:
-            ssh_options = "--rsync-options='-e \"ssh"
-            ssh_options += " -p " + str(self.params.ssh_params.port)
-            ssh_options += " -i \"" + self.params.ssh_params.key_file + "\""
-            if self.params.ssh_params.strict_host_key_checking:
-                ssh_options += " -o StrictHostKeyChecking=yes"
-            else:
-                ssh_options += " -o StrictHostKeyChecking=no"
-            ssh_options += "\"'"
-            out.append(ssh_options)
+        # if self.params.backup_method == DuplicityBackupMethod.SSH:
+        #     ssh_options = "--rsync-options='-e \"ssh"
+        #     ssh_options += " -p " + str(self.params.ssh_params.port)
+        #     ssh_options += " -i \"" + self.params.ssh_params.key_file + "\""
+        #     if self.params.ssh_params.strict_host_key_checking:
+        #         ssh_options += " -o StrictHostKeyChecking=yes"
+        #     else:
+        #         ssh_options += " -o StrictHostKeyChecking=no"
+        #     ssh_options += "\"'"
+        #     out.append(ssh_options)
         if self.params.backup_method == DuplicityBackupMethod.SSH:
             rsync_location = "rsync://"
             rsync_location += self.params.ssh_params.user
             rsync_location += "@"
             rsync_location += self.params.ssh_params.host
-            rsync_location += ":"
             rsync_location += self.params.location_params.remote_path
             out.append(rsync_location)
         out.append(self.params.location_params.restored_date_file)
