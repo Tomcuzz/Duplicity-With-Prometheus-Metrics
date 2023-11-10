@@ -177,7 +177,7 @@ def main():
     if not ssh_key_blank:
         ssh_key_path_directory = os.path.abspath(os.path.join(ssh_key_path, os.pardir))
         if not os.path.exists(ssh_key_path_directory):
-            os.makedirs(ssh_key_ssh_key_path_directorypath, exist_ok=True)
+            os.makedirs(ssh_key_path_directory, exist_ok=True)
         f = open(ssh_key_path, "w+")
         f.write(str(os.getenv("DUPLICITY_SERVER_SSH_KEY_SSH_KEY", "")))
         f.close()
