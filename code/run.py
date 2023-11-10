@@ -142,7 +142,7 @@ class AppMetrics:
                 json.dump(self.last_run_metrics, "w+", fp)
         except ValueError:
             print("run_metric_save: Value Error")
-            print(last_run_metrics)
+            print(self.last_run_metrics)
 
     def run_loop(self):
         """Backup fetching loop"""
