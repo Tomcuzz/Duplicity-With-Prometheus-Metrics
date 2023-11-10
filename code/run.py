@@ -196,6 +196,10 @@ def main():
                 fp.write("  Port " + ssh_params.host + "\\n")
                 fp.write("  User " + ssh_params.user + "\\n")
                 fp.write("  IdentityFile " + ssh_params.key_file + "\\n")
+                if ssh_params.strict_host_key_checking:
+                    fp.write("  StrictHostKeyChecking yes\\n")
+                else:
+                    fp.write("  StrictHostKeyChecking no\\n")
         # ssh_options = "--rsync-options='-e \"ssh"
         # ssh_options += " -p " + str(self.params.ssh_params.port)
         # ssh_options += " -i " + self.params.ssh_params.key_file
