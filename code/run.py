@@ -90,6 +90,9 @@ class AppMetrics:
         """Save metrics out to disk for container restart"""
         try:
             print("0")
+            print(self.last_run_metrics)
+            print(str(self.last_run_metrics["getSuccess"]))
+            print(self.params.backup_name)
             # Update Prometheus metrics with application metrics
             self.metrics.got_metrics.labels(
                 container_name=self.params.backup_name).state(str(self.last_run_metrics["getSuccess"]))
