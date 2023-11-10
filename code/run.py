@@ -212,7 +212,7 @@ def main():
                     fp.write("  StrictHostKeyChecking no\r\n")
 
     duplicity_location_params = duplicity.DuplicityLocationParams(
-        local_backup_path = "/home/duplicity/backup",
+        local_backup_path = "/backup",
         pre_backup_date_file=str(
             os.getenv("DATE_FILE_PRE_BACKUP", "restore_test.txt")),
         restored_date_file=str(

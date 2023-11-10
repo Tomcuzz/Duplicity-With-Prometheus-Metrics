@@ -2,7 +2,7 @@
 FROM python:3
 
 #Expose the nessasary volumes
-VOLUME ["/home/duplicity/backup/data", "/home/duplicity/config", "/home/duplicity/.cache", "/home/duplicity/.gnupg"]
+VOLUME ["/backup/data", "/home/duplicity/config", "/home/duplicity/.cache", "/home/duplicity/.gnupg"]
 
 # Create Enviroment Veriables for exporter
 ENV EXPORTER_PORT="9877"
@@ -54,10 +54,12 @@ RUN set -x \
  && mkdir -p /home/duplicity/config \
  && mkdir -p /home/duplicity/config/.cache/duplicity \
  && mkdir -p /home/duplicity/config/.gnupg \
- && mkdir -p /home/duplicity/backup \
- && mkdir -p /home/duplicity/backup/data \
- && mkdir -p /home/duplicity/backup/test \
- && chmod -R go+rwx /home/duplicity/
+ && mkdir -p /backup \
+ && mkdir -p /backup/data \
+ && mkdir -p /backup/test \
+ && chmod -R go+rwx /home/duplicity/ \
+ && chown -R duplicity:duplicity /backup/ \
+ && chmod -R go+rwx /backup/
 
 # Brief check duplicity works.
 RUN duplicity --version
