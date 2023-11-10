@@ -141,8 +141,8 @@ class AppMetrics:
                 self.metrics.restored_date_file_last_restore_date.labels(
                     backup_name=self.params.backup_name).set(self.last_run_metrics["restore-file-date"])
                 print("14")
-            with open(self.params.last_metric_location, 'w', encoding="utf-8") as fp:
-                json.dump(self.last_run_metrics, "w+", fp)
+            with open(self.params.last_metric_location, 'w+', encoding="utf-8") as fp:
+                json.dump(self.last_run_metrics, fp)
         except ValueError:
             print("run_metric_save: Value Error")
             print(self.last_run_metrics)
