@@ -91,7 +91,7 @@ class Duplicity:
             out.append("--full-if-older-than=" + self.params.full_if_older_than)
         if self.params.verbosity:
             out.append("--verbosity=" + self.params.verbosity)
-        out.append("/home/duplicity/backup/data")
+        out.append("/home/duplicity/backup")
         if self.params.backup_method == DuplicityBackupMethod.SSH:
             rsync_location = "rsync://"
             rsync_location += self.params.ssh_params.user
