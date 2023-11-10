@@ -105,6 +105,7 @@ class Duplicity:
             rsync_location += self.params.ssh_params.user
             rsync_location += "@"
             rsync_location += self.params.ssh_params.host
+            rsync_location += "::"
             rsync_location += self.params.location_params.remote_path
             out.append(rsync_location)
         return out
@@ -132,6 +133,7 @@ class Duplicity:
             rsync_location += self.params.ssh_params.user
             rsync_location += "@"
             rsync_location += self.params.ssh_params.host
+            rsync_location += "::"
             rsync_location += self.params.location_params.remote_path
             out.append(rsync_location)
         out.append(self.params.location_params.restored_date_file)
