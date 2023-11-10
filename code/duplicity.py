@@ -225,8 +225,12 @@ class Duplicity:
             "backup-test-file-success": False,
         }
         pre_backup_date_file = self.params.location_params.local_backup_path
+        if not os.path.exists(pre_backup_date_file):
+            os.makedirs(pre_backup_date_file)
+        
         pre_backup_date_file += "/" + self.params.location_params.pre_backup_date_file
-        self.__capture_command_out(['date', '>', pre_backup_date_file])
+        with open(pre_backup_date_file, "w+", encoding="utf-8") as fp:
+                fp.write(datetime.today().strftime("%a %d %b %H:%M:%S %Z %Y"))
 
         out_temp = self.__read_date_file(pre_backup_date_file)
         out["restore-file-read-success"] = out_temp[0]
@@ -247,9 +251,10 @@ class Duplicity:
     def __read_date_file(self, location:str) -> (bool, int):
         """ Read and process a date file. """
         try:
-            restored_test_file = self.__capture_command_out(['cat', location])
-            restored_test_file_content = "".join(restored_test_file).replace("\n","")
-            return True, self.__process_date_file(restored_test_file_content)
+            with open(location) as f:
+                restored_test_file = f.read()
+                restored_test_file_content = "".join(restored_test_file).replace("\n","")
+                return True, self.__process_date_file(restored_test_file_content)
         except Exception as e:
             print("Caught Error While Processing Restore Date File: " + str(e))
         return False, 0

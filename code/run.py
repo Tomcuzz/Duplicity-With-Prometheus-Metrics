@@ -82,13 +82,14 @@ class AppMetrics:
             with open(self.params.last_metric_location, encoding="utf-8") as fp:
                 self.last_run_metrics = json.load(fp)
         except FileNotFoundError:
-            self.last_run_metrics = copy.deepcopy(duplicity.metric_template)
             print("No Previous Metrics Found")
+            self.last_run_metrics = copy.deepcopy(duplicity.metric_template)
 
 
     def run_metric_save(self):
         """Save metrics out to disk for container restart"""
         try:
+            print("0")
             # Update Prometheus metrics with application metrics
             self.metrics.got_metrics.labels(
                 container_name=self.params.backup_name).state(str(self.last_run_metrics["getSuccess"]))
