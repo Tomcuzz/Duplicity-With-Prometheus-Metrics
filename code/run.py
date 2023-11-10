@@ -146,11 +146,8 @@ class AppMetrics:
     def run_loop(self):
         """Backup fetching loop"""
         while True:
-            time.sleep(10)
             self.process_pre_backup_date_write()
-            time.sleep(10)
             self.process_backup()
-            time.sleep(10)
             self.process_post_backup_date_read()
             time.sleep(self.params.backup_interval)
 
