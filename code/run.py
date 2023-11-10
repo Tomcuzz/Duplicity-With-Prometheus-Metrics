@@ -180,7 +180,7 @@ def main():
         if not os.path.exists(ssh_key_path_directory):
             os.makedirs(ssh_key_path_directory, exist_ok=True)
         f = open(ssh_key_path, "w+")
-        f.write(str(os.getenv("DUPLICITY_SERVER_SSH_KEY_SSH_KEY", "")) + "\r\n")
+        f.write(str(os.getenv("DUPLICITY_SERVER_SSH_KEY_SSH_KEY", "")) + "\n")
         f.close()
         os.chmod(
             ssh_key_path,
