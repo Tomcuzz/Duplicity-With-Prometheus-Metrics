@@ -94,7 +94,7 @@ class Duplicity:
         if self.params.backup_method == DuplicityBackupMethod.SSH:
             ssh_options = "--rsync-options='-e \"ssh"
             ssh_options += " -p " + str(self.params.ssh_params.port)
-            ssh_options += " -i " + self.params.ssh_params.key_file
+            ssh_options += " -i \"" + self.params.ssh_params.key_file + "\""
             if self.params.ssh_params.strict_host_key_checking:
                 ssh_options += " -o StrictHostKeyChecking=yes"
             else:
@@ -123,7 +123,7 @@ class Duplicity:
         if self.params.backup_method == DuplicityBackupMethod.SSH:
             ssh_options = "--rsync-options='-e \"ssh"
             ssh_options += " -p " + str(self.params.ssh_params.port)
-            ssh_options += " -i " + self.params.ssh_params.key_file
+            ssh_options += " -i \"" + self.params.ssh_params.key_file + "\""
             if self.params.ssh_params.strict_host_key_checking:
                 ssh_options += " -o StrictHostKeyChecking=yes"
             else:
