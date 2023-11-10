@@ -194,8 +194,8 @@ def main():
             os.makedirs("/home/duplicity/.ssh")
         with open("/home/duplicity/.ssh/config", "w+", encoding="utf-8") as fp:
                 fp.write("Host " + ssh_params.host + "\r\n")
-                fp.write("  HostName " + str(ssh_params.port) + "\r\n")
-                fp.write("  Port " + ssh_params.host + "\r\n")
+                fp.write("  HostName " + ssh_params.host + "\r\n")
+                fp.write("  Port " + str(ssh_params.port) + "\r\n")
                 fp.write("  User " + ssh_params.user + "\r\n")
                 fp.write("  IdentityFile " + ssh_params.key_file + "\r\n")
                 if ssh_params.strict_host_key_checking:
