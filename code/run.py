@@ -166,6 +166,8 @@ def main():
     connection_env = str(os.getenv("DUPLICITY_SERVER_CONNECTION_TYPE", "ssh")).lower()
     if connection_env == "ssh":
         duplicity_connection_type = duplicity.DuplicityBackupMethod.SSH
+    elif connection_env == "local":
+        duplicity_connection_type = duplicity.DuplicityBackupMethod.LOCAL
 
     ssh_key_string = str(os.getenv("DUPLICITY_SERVER_SSH_KEY_SSH_KEY", ""))
     ssh_key_blank = (ssh_key_string == "")
