@@ -36,6 +36,7 @@ class DuplicityBackupMethod(Enum):
     """An enum to control backup storage location connection type."""
     UNKNOWN = 0
     SSH = 1
+    LOCAL = 2
 
 
 @dataclass
@@ -101,6 +102,8 @@ class Duplicity:
             rsync_location += "/"
             rsync_location += self.params.location_params.remote_path
             out.append(rsync_location)
+        elif self.params.backup_method == DuplicityBackupMethod.LOCAL:
+            out.append("file://" + self.params.location_params.remote_path)
         return out
 
     def __build_duplicity_restore_test_command(self) -> list:
@@ -119,6 +122,8 @@ class Duplicity:
             rsync_location += "/"
             rsync_location += self.params.location_params.remote_path
             out.append(rsync_location)
+        elif self.params.backup_method == DuplicityBackupMethod.LOCAL:
+            out.append("file://" + self.params.location_params.remote_path)
         out.append(self.params.location_params.restored_date_file)
         return out
 
