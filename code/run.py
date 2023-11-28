@@ -96,6 +96,8 @@ class AppMetrics:
             if self.last_run_metrics["getSuccess"]:
                 self.metrics.last_backup.labels(
                     backup_name=self.params.backup_name).set(self.last_run_metrics["lastBackup"])
+                self.metrics.elapse_time.labels(
+                    backup_name=self.params.backup_name).set(self.last_run_metrics["elapseTime"])
                 self.metrics.time_since_backup.labels(
                     backup_name=self.params.backup_name).set(self.last_run_metrics["timeSinceBackup"])
                 self.metrics.errors.labels(
