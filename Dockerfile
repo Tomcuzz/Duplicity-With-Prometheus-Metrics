@@ -55,8 +55,8 @@ RUN set -x \
     # Run as non-root user.
  && adduser --disabled-password --uid 1896 duplicity \
  && mkdir -p /home/duplicity/config \
- && mkdir -p /home/duplicity/config/.cache/duplicity \
- && mkdir -p /home/duplicity/config/.gnupg \
+ && mkdir -p /home/duplicity/.cache/duplicity \
+ && mkdir -p /home/duplicity/.gnupg \
  && mkdir -p /backup \
  && mkdir -p /backup/data \
  && mkdir -p /backup/test \
