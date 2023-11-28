@@ -13,6 +13,9 @@ ENV BACKUP_NAME="duplicy_backup"
 # Create Environment veriable for how often to backup
 ENV BACKUP_INTERVAL="86400"
 
+# Create Environment veriable for duplicity passphrase
+ENV PASSPHRASE=""
+
 # Create Environment veriable for duplicity configs
 ENV DUPLICITY_FULL_IF_OLDER_THAN=""
 ENV DUPLICITY_VERBOSITY=""
