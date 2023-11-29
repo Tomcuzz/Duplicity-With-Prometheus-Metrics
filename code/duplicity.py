@@ -16,7 +16,6 @@ metric_template = {
     "getSuccess":           False,
     "lastBackup":           0,
     "elapseTime":           0,
-    "timeSinceBackup":      0,
     "errors":               0,
     "files": {
         "new":              0, #NewFiles
@@ -199,9 +198,6 @@ class Duplicity:
                                 out["size"]["totalDestChange"] = sline[1]
             elif line.startswith("--------------[ Backup Statistics ]--------------"):
                 reached_stats = True
-
-        out["timeSinceBackup"] = int(float(time.time()) - float(out["lastBackup"]))
-
         return out
 
     def __write_duplicity_restore_test_file(self) -> dict:
