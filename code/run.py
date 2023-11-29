@@ -29,10 +29,10 @@ class Metrics:
         states=["True", "False"], labelnames=['backup_name'])
     last_backup =  Gauge(
         "duplicity_last_backup", "Last Backup Date", labelnames=['backup_name'])
+    next_backup =  Gauge(
+        "duplicity_next_backup", "Next Backup Date", labelnames=['backup_name'])
     elapse_time =  Gauge(
         "duplicity_elapse_time", "Backup Elapse Time", labelnames=['backup_name'])
-    time_since_backup =  Gauge(
-        "duplicity_time_since_backup", "Time Since Last Backup", labelnames=['backup_name'])
     errors = Gauge(
         "duplicity_errors", "Backup Errors", labelnames=['backup_name'])
     new_files = Gauge(
@@ -98,8 +98,6 @@ class AppMetrics:
                     backup_name=self.params.backup_name).set(self.last_run_metrics["lastBackup"])
                 self.metrics.elapse_time.labels(
                     backup_name=self.params.backup_name).set(self.last_run_metrics["elapseTime"])
-                self.metrics.time_since_backup.labels(
-                    backup_name=self.params.backup_name).set(self.last_run_metrics["timeSinceBackup"])
                 self.metrics.errors.labels(
                     backup_name=self.params.backup_name).set(self.last_run_metrics["errors"])
                 self.metrics.new_files.labels(
@@ -139,6 +137,8 @@ class AppMetrics:
             self.process_pre_backup_date_write()
             self.process_backup()
             self.process_post_backup_date_read()
+            self.metrics.next_backup.labels(backup_name=self.params.backup_name).set(
+                int(float(time.time()) + self.params.backup_interval))
             time.sleep(self.params.backup_interval)
 
     def process_pre_backup_date_write(self):
