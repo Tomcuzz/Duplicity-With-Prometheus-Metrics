@@ -61,6 +61,8 @@ RUN set -x \
  && mkdir -p /backup/data \
  && mkdir -p /backup/test \
  && chmod -R go+rwx /home/duplicity/ \
+ && chown -R duplicity:duplicity /home/duplicity/ \
+ && chmod -R 700 /home/duplicity/.gnupg \
  && chown -R duplicity:duplicity /backup/ \
  && chmod -R go+rwx /backup/
 
