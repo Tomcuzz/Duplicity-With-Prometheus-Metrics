@@ -146,7 +146,7 @@ class Duplicity:
 
     def __build_duplicity_restore_command(self) -> list:
         """ Build the duplicity restore command. """
-        out = ["duplicity"]
+        out = ["duplicity", "restore"]
         out.append("--allow-source-mismatch")
         out.append("--force")
         if self.params.verbosity:
