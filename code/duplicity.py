@@ -55,6 +55,8 @@ class DuplicityLocationParams():
     pre_backup_date_file:str = ""
     restored_date_file:str = ""
     remote_path:str = "/home/duplicity/backup"
+    local_path:str = "/backup"
+    restore_confirm_file_path:str = "/backup/restore_confirm"
 
 
 @dataclass
@@ -84,6 +86,22 @@ class Duplicity:
             print_prefix="[Duplicity Ouput]")
         return self.__process_duplicity_logs(logs)
 
+    def run_restore(self) -> bool:
+        """ Run restore and return success. """
+        if self.__check_restore_confirmation_file():
+            self.__capture_command_out(
+                command=self.__build_duplicity_restore_command(),
+                print_prefix="[Duplicity Restore Ouput]")
+            restore_time = self.__read_date_file(self.params.location_params.pre_backup_date_file)
+            self.__write_restore_confirmation_file_completion()
+            if restore_time[0]:
+                print(
+                    "[Duplicity Restore Ouput]: Restore complete with output time: "
+                    + str(restore_time[1]))
+            return restore_time[0]
+        else:
+            print("Error restore confirmation file not present and correct")
+
     def __build_duplicity_command(self) -> list:
         """ Build the duplicity command. """
         out = ["duplicity"]
@@ -92,7 +110,7 @@ class Duplicity:
             out.append("--full-if-older-than=" + self.params.full_if_older_than)
         if self.params.verbosity:
             out.append("--verbosity=" + self.params.verbosity)
-        out.append("/backup")
+        out.append(self.params.location_params.local_path)
         if self.params.backup_method == DuplicityBackupMethod.SSH:
             rsync_location = "rsync://"
             rsync_location += self.params.ssh_params.user
@@ -124,6 +142,26 @@ class Duplicity:
         elif self.params.backup_method == DuplicityBackupMethod.LOCAL:
             out.append("file://" + self.params.location_params.remote_path)
         out.append(self.params.location_params.restored_date_file)
+        return out
+
+    def __build_duplicity_restore_command(self) -> list:
+        """ Build the duplicity restore command. """
+        out = ["duplicity"]
+        out.append("--allow-source-mismatch")
+        out.append("--force")
+        if self.params.verbosity:
+            out.append("--verbosity=" + self.params.verbosity)
+        if self.params.backup_method == DuplicityBackupMethod.SSH:
+            rsync_location = "rsync://"
+            rsync_location += self.params.ssh_params.user
+            rsync_location += "@"
+            rsync_location += self.params.ssh_params.host
+            rsync_location += "/"
+            rsync_location += self.params.location_params.remote_path
+            out.append(rsync_location)
+        elif self.params.backup_method == DuplicityBackupMethod.LOCAL:
+            out.append("file://" + self.params.location_params.remote_path)
+        out.append(self.params.location_params.local_path)
         return out
 
     def run_post_backup(self):
@@ -209,7 +247,7 @@ class Duplicity:
         pre_backup_date_file = self.params.location_params.local_backup_path
         if not os.path.exists(pre_backup_date_file):
             os.makedirs(pre_backup_date_file)
-        
+
         pre_backup_date_file += "/" + self.params.location_params.pre_backup_date_file
         with open(pre_backup_date_file, "w+", encoding="utf-8") as fp:
             fp.write(datetime.now(pytz.utc).strftime("%a %d %b %H:%M:%S %Z %Y"))
@@ -240,6 +278,22 @@ class Duplicity:
         except Exception as e:
             print("Caught Error While Processing Restore Date File: " + str(e))
         return False, 0
+
+    def __check_restore_confirmation_file(self) -> bool:
+        """ Read restore confirmation file and return if ok to restore. """
+        try:
+            with open(self.params.location_params.restore_confirm_file_path, encoding="utf-8") as f:
+                restore_confirm_file = f.read()
+                restore_confirm_file_content = "".join(restore_confirm_file).replace("\n","")
+                if restore_confirm_file_content == "restore":
+                    return True
+        except Exception as e:
+            print("Caught Error While Processing Restore Confirm File: " + str(e))
+        return False
+
+    def __write_restore_confirmation_file_completion(self):
+        with open(self.params.location_params.restore_confirm_file_path, "w+", encoding="utf-8") as fp:
+            fp.write("Restore complete: " + datetime.now(pytz.utc).strftime("%a %d %b %H:%M:%S %Z %Y"))
 
     def __process_date_file(self, file_content:str)  -> int:
         """ Process date file. """

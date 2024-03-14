@@ -141,6 +141,10 @@ class AppMetrics:
                 int(float(time.time()) + self.params.backup_interval))
             time.sleep(self.params.backup_interval)
 
+    def run_restore(self):
+        """Run duplicity restore."""
+        self.duplicity.run_restore()
+
     def process_pre_backup_date_write(self):
         """Run pre-backup restore date file write and save/export metric."""
         self.last_run_metrics.update(self.duplicity.run_pre_backup())
@@ -234,6 +238,7 @@ def main():
         allow_source_mismatch=(str(os.getenv("DUPLICITY_ALLOW_SOURCE_MISMATCH", "True")) == "True"),
         ssh_params=ssh_params
     )
+
     app_metrics_params = AppMetricParams(
         backup_name=str(os.getenv("BACKUP_NAME", "duplicity_backup")),
         duplicity_params = duplicity_params,
@@ -244,6 +249,12 @@ def main():
     app_metrics = AppMetrics(
         params=app_metrics_params
     )
+
+    duplicity_run_mode = str(os.getenv("DUPLICITY_RUN_MODE", "BACKUP"))
+    if duplicity_run_mode == "RESTORE":
+        print("Starting Restore")
+        app_metrics.run_restore()
+        return
 
     print("Running pre-run load")
     app_metrics.pre_start_load()
