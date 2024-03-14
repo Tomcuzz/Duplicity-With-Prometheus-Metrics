@@ -56,7 +56,7 @@ class DuplicityLocationParams():
     restored_date_file:str = ""
     remote_path:str = "/home/duplicity/backup"
     local_path:str = "/backup"
-    restore_confirm_file_path:str = "/backup/restore_confirm"
+    restore_confirm_file_path:str = "/backup/data/restore_confirm"
 
 
 @dataclass
