@@ -42,7 +42,7 @@ class DuplicityBackupMethod(Enum):
 class SSHParams():
     """Setup params for ssh params."""
     port:int = 22
-    key_file:str = "/home/duplicity/config//id_rsa"
+    key_file:str = "/home/duplicity/config/id_rsa"
     user:str = "duplicity"
     host:str = "192.168.1.1"
     strict_host_key_checking:bool = False
@@ -162,7 +162,7 @@ class Duplicity:
             out.append(rsync_location)
         elif self.params.backup_method == DuplicityBackupMethod.LOCAL:
             out.append("file://" + self.params.location_params.remote_path)
-        out.append(self.params.location_params.local_path)
+        out.append(self.params.location_params.local_path + "/data")
         return out
 
     def run_post_backup(self):
