@@ -24,7 +24,7 @@ tcousin/duplicty-with-prometheus
 
 The following can be used to restore data:
 
-echo "restore" > /home/<user>/backup_test/data/restore_confirm
+echo "restore" > /home/<user>/backup_test/data/restore_confirm\
 sudo docker run \
 -p 9877:9877 \
 -e PUID="1001" \
