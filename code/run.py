@@ -144,6 +144,9 @@ class AppMetrics:
     def run_restore(self):
         """Run duplicity restore."""
         self.duplicity.run_restore()
+        print("Restore Finished")
+        while True:
+            time.sleep(1000)
 
     def process_pre_backup_date_write(self):
         """Run pre-backup restore date file write and save/export metric."""
