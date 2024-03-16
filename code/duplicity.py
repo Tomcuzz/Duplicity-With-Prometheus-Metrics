@@ -92,15 +92,14 @@ class Duplicity:
             self.__capture_command_out(
                 command=self.__build_duplicity_restore_command(),
                 print_prefix="[Duplicity Restore Ouput]")
-            restore_time = self.__read_date_file(self.params.location_params.pre_backup_date_file)
-            self.__write_restore_confirmation_file_completion()
-            if restore_time[0]:
-                print(
-                    "[Duplicity Restore Ouput]: Restore complete with output time: "
-                    + str(restore_time[1]))
-            return restore_time[0]
+            restore_time = self.__write_restore_confirmation_file_completion()
+            print(
+                "[Duplicity Restore Ouput]: Restore complete with output time: "
+                + restore_time)
+            return True
         else:
             print("Error restore confirmation file not present and correct")
+        return False
 
     def __build_duplicity_command(self) -> list:
         """ Build the duplicity command. """
@@ -292,9 +291,11 @@ class Duplicity:
             print("Caught Error While Processing Restore Confirm File: " + str(e))
         return False
 
-    def __write_restore_confirmation_file_completion(self):
+    def __write_restore_confirmation_file_completion(self) -> str:
+        restore_time = datetime.now(pytz.utc).strftime("%a %d %b %H:%M:%S %Z %Y")
         with open(self.params.location_params.restore_confirm_file_path, "w+", encoding="utf-8") as fp:
-            fp.write("Restore complete: " + datetime.now(pytz.utc).strftime("%a %d %b %H:%M:%S %Z %Y"))
+            fp.write("Restore complete: " + restore_time)
+        return restore_time
 
     def __process_date_file(self, file_content:str)  -> int:
         """ Process date file. """
