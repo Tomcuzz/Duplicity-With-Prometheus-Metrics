@@ -13,10 +13,10 @@ sudo docker run \
 -e DUPLICITY_FULL_IF_OLDER_THAN="1M" \
 -e DUPLICITY_SERVER_SSH_KEY_FILE="/home/duplicity/.ssh/id_rsa" \
 -e DUPLICITY_SERVER_SSH_KEY_SSH_KEY=$SSH_KEY \
--v /home/tgc/backup_test/config:/home/duplicity/config \
--v /home/tgc/backup_test/data:/backup/data \
--v /home/tgc/backup_test/cache:/home/duplicity/.cache \
--v /home/tgc/backup_test/gnupg:/home/duplicity/.gnupg \
+-v /home/\<user\>/backup_test/config:/home/duplicity/config \
+-v /home/\<user\>/backup_test/data:/backup/data \
+-v /home/\<user\>/backup_test/cache:/home/duplicity/.cache \
+-v /home/\<user\>/backup_test/gnupg:/home/duplicity/.gnupg \
 --name duplicity_test \
 --rm \
 tcousin/duplicty-with-prometheus
@@ -37,10 +37,10 @@ sudo docker run \
 -e DUPLICITY_FULL_IF_OLDER_THAN="1M" \
 -e DUPLICITY_SERVER_SSH_KEY_FILE="/home/duplicity/.ssh/id_rsa" \
 -e DUPLICITY_SERVER_SSH_KEY_SSH_KEY=$SSH_KEY \
--v /home/<user>/backup_test/config:/home/duplicity/config \
--v /home/<user>/backup_test/data:/backup/data \
--v /home/<user>/backup_test/cache:/home/duplicity/.cache \
--v /home/<user>/backup_test/gnupg:/home/duplicity/.gnupg \
+-v /home/\<user\>/backup_test/config:/home/duplicity/config \
+-v /home/\<user\>/backup_test/data:/backup/data \
+-v /home/\<user\>/backup_test/cache:/home/duplicity/.cache \
+-v /home/\<user\>/backup_test/gnupg:/home/duplicity/.gnupg \
 --name duplicity_test \
 --rm \
 tcousin/duplicty-with-prometheus
