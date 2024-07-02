@@ -113,6 +113,7 @@ class Duplicity:
         if self.params.exclude_backup_dirs:
             for exclude_dir in self.params.exclude_backup_dirs.split(","):
                 out.append("--exclude=" + exclude_dir)
+        out.append("--exclude=/backup/data/lost+found")
         out.append(self.params.location_params.local_path)
         if self.params.backup_method == DuplicityBackupMethod.SSH:
             rsync_location = "rsync://"
