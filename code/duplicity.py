@@ -110,7 +110,7 @@ class Duplicity:
             out.append("--full-if-older-than=" + self.params.full_if_older_than)
         if self.params.exclude_backup_dirs:
             if "," in self.params.exclude_backup_dirs:
-                for exclude_dir in self.params.exclude_backup_dirs.split():
+                for exclude_dir in self.params.exclude_backup_dirs.split(","):
                     out.append("--exclude='" + exclude_dir + "'")
             else:
             out.append("--exclude='" + self.params.exclude_backup_dirs + "'")
