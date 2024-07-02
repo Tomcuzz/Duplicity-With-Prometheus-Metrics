@@ -52,6 +52,7 @@ class SSHParams():
 class DuplicityLocationParams():
     """Setup params for duplicity location."""
     local_backup_path:str = ""
+    exclude_backup_dirs:str = ""
     pre_backup_date_file:str = ""
     restored_date_file:str = ""
     remote_path:str = "/home/duplicity/backup"
@@ -107,6 +108,12 @@ class Duplicity:
         out.append("--allow-source-mismatch")
         if self.params.full_if_older_than:
             out.append("--full-if-older-than=" + self.params.full_if_older_than)
+        if self.params.exclude_backup_dirs:
+            if "," in self.params.exclude_backup_dirs:
+                for exclude_dir in self.params.exclude_backup_dirs.split():
+                    out.append("--exclude='" + exclude_dir + "'")
+            else:
+            out.append("--exclude='" + self.params.exclude_backup_dirs + "'")
         if self.params.verbosity:
             out.append("--verbosity=" + self.params.verbosity)
         out.append(self.params.location_params.local_path)
