@@ -226,8 +226,6 @@ def main():
 
     duplicity_location_params = duplicity.DuplicityLocationParams(
         local_backup_path = "/backup",
-        exclude_backup_dirs=str(
-            os.getenv("EXCLUDE_BACKUP_DIRS", "")),
         pre_backup_date_file=str(
             os.getenv("DATE_FILE_PRE_BACKUP", "restore_test.txt")),
         restored_date_file=str(
@@ -237,6 +235,7 @@ def main():
     )
     duplicity_params = duplicity.DuplicityParams(
         full_if_older_than=str(os.getenv("DUPLICITY_FULL_IF_OLDER_THAN", "")),
+        exclude_backup_dirs=str(os.getenv("EXCLUDE_BACKUP_DIRS", "")),
         verbosity=str(os.getenv("DUPLICITY_VERBOSITY", "")),
         location_params=duplicity_location_params,
         backup_method=duplicity_connection_type,

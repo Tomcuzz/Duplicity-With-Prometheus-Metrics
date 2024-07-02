@@ -52,7 +52,6 @@ class SSHParams():
 class DuplicityLocationParams():
     """Setup params for duplicity location."""
     local_backup_path:str = ""
-    exclude_backup_dirs:str = ""
     pre_backup_date_file:str = ""
     restored_date_file:str = ""
     remote_path:str = "/home/duplicity/backup"
@@ -65,6 +64,7 @@ class DuplicityParams:
     """Setup params for dupliciy class."""
     location_params:DuplicityLocationParams = field(default_factory=DuplicityLocationParams)
     full_if_older_than:str = ""
+    exclude_backup_dirs:str = ""
     verbosity:str = ""
     allow_source_mismatch:bool = True
     backup_method:DuplicityBackupMethod = DuplicityBackupMethod.SSH
