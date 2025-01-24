@@ -77,7 +77,7 @@ EXPOSE 9877
 HEALTHCHECK --interval=5m --timeout=3s --start-period=10s --retries=3 CMD curl -f http://localhost:9877/ || exit 1
 
 # Run as duplicity
-USER duplicity
+# USER duplicity
 
 # Command to run the executable
 CMD [ "python", "-u", "./code/run.py" ]
