@@ -44,3 +44,6 @@ sudo docker run \
 --name duplicity_test \
 --rm \
 tcousin/duplicty-with-prometheus
+
+
+DUPLICITY_RUN_MODE can be set to "WAIT" to allow conainter to be brought up and no action performed to allow manual duplicity commands
