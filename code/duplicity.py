@@ -65,6 +65,7 @@ class DuplicityParams:
     location_params:DuplicityLocationParams = field(default_factory=DuplicityLocationParams)
     full_if_older_than:str = ""
     exclude_backup_dirs:str = ""
+    restore_to_time:str = ""
     verbosity:str = ""
     allow_source_mismatch:bool = True
     backup_method:DuplicityBackupMethod = DuplicityBackupMethod.SSH
@@ -156,6 +157,8 @@ class Duplicity:
         out.append("--file-to-restore=data")
         if self.params.verbosity:
             out.append("--verbosity=" + self.params.verbosity)
+        if self.params.restore_to_time:
+            out.append("--restore-time=" + self.params.restore_to_time)
         if self.params.backup_method == DuplicityBackupMethod.SSH:
             rsync_location = "rsync://"
             rsync_location += self.params.ssh_params.user
