@@ -260,6 +260,11 @@ def main():
         app_metrics.run_restore()
         return
 
+    if duplicity_run_mode == "WAIT":
+        print("Going into wait mode")
+        while True:
+            time.sleep(5)
+
     print("Running pre-run load")
     app_metrics.pre_start_load()
 
