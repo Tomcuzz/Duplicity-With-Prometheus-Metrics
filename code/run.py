@@ -236,6 +236,7 @@ def main():
     duplicity_params = duplicity.DuplicityParams(
         full_if_older_than=str(os.getenv("DUPLICITY_FULL_IF_OLDER_THAN", "")),
         exclude_backup_dirs=str(os.getenv("EXCLUDE_BACKUP_DIRS", "")),
+        restore_to_time=str(os.getenv("RESTORE_TO_TIME", "")),
         verbosity=str(os.getenv("DUPLICITY_VERBOSITY", "")),
         location_params=duplicity_location_params,
         backup_method=duplicity_connection_type,
