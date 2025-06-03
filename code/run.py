@@ -24,6 +24,9 @@ class AppMetricParams:
 @dataclass
 class Metrics:
     """Class to hold prometheus Metrics."""
+    backup_state = Enum(
+        "duplicity_backup_state", "The current job state",
+        states=["Unkown", "Running", "Waiting"], labelnames=['backup_name'])
     got_metrics = Enum(
         "duplicity_got_metrics", "Able to get metrics",
         states=["True", "False"], labelnames=['backup_name'])
@@ -75,6 +78,7 @@ class AppMetrics:
         print("Adding Metrics")
         self.last_run_metrics = {}
         self.metrics = Metrics()
+        self.metrics.backup_state.labels(backup_name=self.params.backup_name).set("Unkown")
         self.duplicity = duplicity.Duplicity(params=params.duplicity_params)
         self.last_run_metrics = copy.deepcopy(duplicity.metric_template)
 
@@ -133,12 +137,15 @@ class AppMetrics:
 
     def run_loop(self):
         """Backup fetching loop"""
+        
         while True:
+            self.metrics.backup_state.labels(backup_name=self.params.backup_name).set("Running")
             self.process_pre_backup_date_write()
             self.process_backup()
             self.process_post_backup_date_read()
             self.metrics.next_backup.labels(backup_name=self.params.backup_name).set(
                 int(float(time.time()) + self.params.backup_interval))
+            self.metrics.backup_state.labels(backup_name=self.params.backup_name).set("Waiting")
             time.sleep(self.params.backup_interval)
 
     def run_restore(self):
