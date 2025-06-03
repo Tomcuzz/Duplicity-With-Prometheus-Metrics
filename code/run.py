@@ -78,7 +78,7 @@ class AppMetrics:
         print("Adding Metrics")
         self.last_run_metrics = {}
         self.metrics = Metrics()
-        self.metrics.backup_state.labels(backup_name=self.params.backup_name).set("Unkown")
+        self.metrics.backup_state.labels(backup_name=self.params.backup_name).state("Unkown")
         self.duplicity = duplicity.Duplicity(params=params.duplicity_params)
         self.last_run_metrics = copy.deepcopy(duplicity.metric_template)
 
@@ -139,13 +139,13 @@ class AppMetrics:
         """Backup fetching loop"""
         
         while True:
-            self.metrics.backup_state.labels(backup_name=self.params.backup_name).set("Running")
+            self.metrics.backup_state.labels(backup_name=self.params.backup_name).state("Running")
             self.process_pre_backup_date_write()
             self.process_backup()
             self.process_post_backup_date_read()
             self.metrics.next_backup.labels(backup_name=self.params.backup_name).set(
                 int(float(time.time()) + self.params.backup_interval))
-            self.metrics.backup_state.labels(backup_name=self.params.backup_name).set("Waiting")
+            self.metrics.backup_state.labels(backup_name=self.params.backup_name).state("Waiting")
             time.sleep(self.params.backup_interval)
 
     def run_restore(self):
