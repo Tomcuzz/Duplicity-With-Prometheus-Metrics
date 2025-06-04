@@ -74,6 +74,7 @@ class DuplicityParams:
     location_params:DuplicityLocationParams = field(default_factory=DuplicityLocationParams)
     full_if_older_than:str = ""
     remove_all_but_n_full:int = 0
+    remove_all_inc_of_but_n_full:int = 0
     exclude_backup_dirs:str = ""
     restore_to_time:str = ""
     verbosity:str = ""
@@ -117,12 +118,19 @@ class Duplicity:
     def run_old_backup_clean(self) -> dict:
         """ Run cleanup of old backups. """
         if self.params.remove_all_but_n_full > 0:
-            print("[Duplicity Old Backup Cleanup]: Starting old backup clean")
+            print("[Duplicity Old Full Backup Cleanup]: Starting old backup clean")
             log = self.__capture_command_out(
-                command=self.__build_duplicity_old_backup_clean_command(),
-                print_prefix="[Duplicity Backup Old Cleanup]")
+                command=self.__build_duplicity_old_full_backup_clean_command(),
+                print_prefix="[Duplicity Old Full Backup Cleanup]")
         else:
-            print("[Duplicity Backup Old Cleanup]: 0 \"remove_all_but_n_full\" given so clean was not run")
+            print("[Duplicity Old Full Backup Cleanup]: 0 \"remove_all_but_n_full\" given so clean was not run")
+        if self.params.remove_all_inc_of_but_n_full > 0:
+            print("[Duplicity Old Backup Incremental Cleanup]: Starting old backup clean")
+            log = self.__capture_command_out(
+                command=self.__build_duplicity_old_incremental_backup_clean_command(),
+                print_prefix="[Duplicity Old Backup Incremental Cleanup]")
+        else:
+            print("[Duplicity Old Backup Incremental Cleanup]: 0 \"remove_all_but_n_full\" given so clean was not run")
         return {"sucess": True}
 
     def run_restore(self) -> bool:
@@ -203,10 +211,30 @@ class Duplicity:
             out.append("file://" + self.params.location_params.remote_path)
         return out
     
-    def __build_duplicity_old_backup_clean_command(self) -> list:
+    def __build_duplicity_old_full_backup_clean_command(self) -> list:
         """ Build the duplicity command. """
         out = ["duplicity", "remove-all-but-n-full"]
         out.append(str(self.params.remove_all_but_n_full))
+        out.append("--allow-source-mismatch")
+        out.append("--force") # Use force to actually delete rather than just list
+        if self.params.verbosity:
+            out.append("--verbosity=" + self.params.verbosity)
+        if self.params.backup_method == DuplicityBackupMethod.SSH:
+            rsync_location = "rsync://"
+            rsync_location += self.params.ssh_params.user
+            rsync_location += "@"
+            rsync_location += self.params.ssh_params.host
+            rsync_location += "/"
+            rsync_location += self.params.location_params.remote_path
+            out.append(rsync_location)
+        elif self.params.backup_method == DuplicityBackupMethod.LOCAL:
+            out.append("file://" + self.params.location_params.remote_path)
+        return out
+    
+    def __build_duplicity_old_incremental_backup_clean_command(self) -> list:
+        """ Build the duplicity command. """
+        out = ["duplicity", "remove-all-inc-of-but-n-full"]
+        out.append(str(self.params.remove_all_inc_of_but_n_full))
         out.append("--allow-source-mismatch")
         out.append("--force") # Use force to actually delete rather than just list
         if self.params.verbosity:
