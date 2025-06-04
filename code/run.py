@@ -160,6 +160,10 @@ class AppMetrics:
         """Run duplicity old backup clean."""
         self.duplicity.run_old_backup_clean()
 
+    def run_cleanup(self):
+        """Run duplicity cleanup command."""
+        self.duplicity.run_cleanup()
+
     def run_collection_status(self):
         """Run duplicity collection status."""
         self.duplicity.run_collection_status()
