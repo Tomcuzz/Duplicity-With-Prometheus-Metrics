@@ -55,6 +55,11 @@ class Metrics:
     total_destination_size_change = Gauge(
         "duplicity_total_destination_size_change", "", labelnames=['backup_name'])
 
+    num_full_backups = Gauge(
+        "duplicity_num_full_backups", "Number of Full Backups on Target", labelnames=['backup_name'])
+    num_incremental_backups = Gauge(
+        "duplicity_num_incremental_backups", "Number of Incremental Backups on Target", labelnames=['backup_name'])
+
     pre_backup_date_file_last_backup =  Gauge(
         "duplicity_pre_backup_date_file_date",
         "Last Pre Backup File Backup Date",
