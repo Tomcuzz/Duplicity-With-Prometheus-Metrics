@@ -31,7 +31,14 @@ metric_template = {
     }
 }
 
-collection_status_metrics_template = {}
+collection_status_metrics_template = {
+    "fullBackups": {
+        "num":                0
+    },
+    "incrementalBackups": {
+        "num":                0
+    }
+}
 
 class DuplicityBackupMethod(Enum):
     """An enum to control backup storage location connection type."""
@@ -337,6 +344,15 @@ class Duplicity:
     def __process_duplicity_collection_status(self, log_output:list) -> dict:
         """ Process duplicity collection status to extract metrics. """
         out = copy.deepcopy(collection_status_metrics_template)
+        reached_stats = False
+        for line in log_output:
+            if reached_stats:
+                if line.startswith("Full   "):
+                    out["fullBackups"]["num"] += 1
+                elif line.startswith("Incremental   "):
+                    out["incrementalBackups"]["num"] += 1
+            elif line.startswith("Collection Status"):
+                reached_stats = True
         return out
 
     def __write_duplicity_restore_test_file(self) -> dict:
