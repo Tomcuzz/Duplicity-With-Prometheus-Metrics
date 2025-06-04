@@ -140,6 +140,18 @@ class AppMetrics:
         except ValueError:
             print("run_metric_save: Value Error")
 
+    def save_last_collection_stats(self, output:dict):
+        """Publish last collection stats"""
+        try:
+            self.metrics.num_full_backups.labels(
+                backup_name=self.params.backup_name).set(output["fullBackups"]["num"])
+            self.metrics.num_incremental_backups.labels(
+                backup_name=self.params.backup_name).set(output["incrementalBackups"]["num"])
+        except KeyError:
+            print("run_metric_save: Key Error")
+        except ValueError:
+            print("run_metric_save: Value Error")
+    
     def run_loop(self):
         """Backup fetching loop"""
         
@@ -171,7 +183,7 @@ class AppMetrics:
 
     def run_collection_status(self):
         """Run duplicity collection status."""
-        self.duplicity.run_collection_status()
+        self.save_last_collection_stats(self.duplicity.run_collection_status())
 
     def process_pre_backup_date_write(self):
         """Run pre-backup restore date file write and save/export metric."""
