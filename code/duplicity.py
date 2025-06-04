@@ -351,7 +351,7 @@ class Duplicity:
                     out["fullBackups"]["num"] += 1
                 elif line.startswith("Incremental   "):
                     out["incrementalBackups"]["num"] += 1
-            elif line.startswith("Collection Status"):
+            elif line.replace(" ", "").startswith("Collection Status"):
                 reached_stats = True
         return out
 
