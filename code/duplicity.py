@@ -92,8 +92,8 @@ class Duplicity:
     def run_collection_status(self) -> dict:
         """ Run duplicity cleanup. """
         print("[Duplicity Collection Status]: Starting Collection Status")
-        log = self.__build_duplicity_collection_status_command(
-            command=self.__build_duplicity_cleanup_command(),
+        log = self.__capture_command_out(
+            command=self.__build_duplicity_collection_status_command(),
             print_prefix="[Duplicity Collection Status]")
         return {"sucess": True}
 
