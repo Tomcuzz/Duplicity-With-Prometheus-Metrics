@@ -161,6 +161,7 @@ class AppMetrics:
             self.process_backup()
             self.process_post_backup_date_read()
             self.run_old_backup_clean()
+            self.run_cleanup()
             self.metrics.next_backup.labels(backup_name=self.params.backup_name).set(
                 int(float(time.time()) + self.params.backup_interval))
             self.metrics.backup_state.labels(backup_name=self.params.backup_name).state("Waiting")
