@@ -286,9 +286,9 @@ def main():
             time.sleep(1000)
     
     if duplicity_run_mode == "CLEANUP":
-        print("Starting Clean")
+        print("Starting Cleanup")
         app_metrics.run_cleanup()
-        print("Clean Finished")
+        print("Cleanuo Finished")
         while True:
             time.sleep(1000)
 
