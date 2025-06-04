@@ -104,7 +104,7 @@ class Duplicity:
         log = self.__capture_command_out(
             command=self.__build_duplicity_collection_status_command(),
             print_prefix="[Duplicity Collection Status]")
-        return self.__process_duplicity_collection_status(logs)
+        return self.__process_duplicity_collection_status(log)
 
     def run_cleanup(self) -> dict:
         """ Run duplicity cleanup. """
