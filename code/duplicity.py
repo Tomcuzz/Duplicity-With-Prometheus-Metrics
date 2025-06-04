@@ -347,11 +347,11 @@ class Duplicity:
         reached_stats = False
         for line in log_output:
             if reached_stats:
-                if line.startswith("Full   "):
+                if line.replace(" ", "").startswith("Full   "):
                     out["fullBackups"]["num"] += 1
-                elif line.startswith("Incremental   "):
+                elif line.replace(" ", "").startswith("Incremental   "):
                     out["incrementalBackups"]["num"] += 1
-            elif line.replace(" ", "").startswith("Collection Status"):
+            elif line.startswith("Collection Status"):
                 reached_stats = True
         return out
 
