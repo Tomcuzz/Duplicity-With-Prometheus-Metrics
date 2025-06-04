@@ -89,6 +89,14 @@ class Duplicity:
             print_prefix="[Duplicity Ouput]")
         return self.__process_duplicity_logs(logs)
 
+    def run_collection_status(self) -> dict:
+        """ Run duplicity cleanup. """
+        print("[Duplicity Collection Status]: Starting Collection Status")
+        log = self.__build_duplicity_collection_status_command(
+            command=self.__build_duplicity_cleanup_command(),
+            print_prefix="[Duplicity Collection Status]")
+        return {"sucess": True}
+
     def run_cleanup(self) -> dict:
         """ Run duplicity cleanup. """
         print("[Duplicity Cleanup]: Starting old backup clean")
@@ -166,8 +174,26 @@ class Duplicity:
         elif self.params.backup_method == DuplicityBackupMethod.LOCAL:
             out.append("file://" + self.params.location_params.remote_path)
         return out
-    
 
+    def __build_duplicity_collection_status_command(self) -> list:
+        """ Build the duplicity command. """
+        out = ["duplicity", "collection-status"]
+        out.append("--allow-source-mismatch")
+        out.append("--force") # Use force to actually delete rather than just list
+        if self.params.verbosity:
+            out.append("--verbosity=" + self.params.verbosity)
+        if self.params.backup_method == DuplicityBackupMethod.SSH:
+            rsync_location = "rsync://"
+            rsync_location += self.params.ssh_params.user
+            rsync_location += "@"
+            rsync_location += self.params.ssh_params.host
+            rsync_location += "/"
+            rsync_location += self.params.location_params.remote_path
+            out.append(rsync_location)
+        elif self.params.backup_method == DuplicityBackupMethod.LOCAL:
+            out.append("file://" + self.params.location_params.remote_path)
+        return out
+    
     def __build_duplicity_old_backup_clean_command(self) -> list:
         """ Build the duplicity command. """
         out = ["duplicity", "remove-all-but-n-full"]
