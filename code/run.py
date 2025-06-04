@@ -143,6 +143,7 @@ class AppMetrics:
             self.process_pre_backup_date_write()
             self.process_backup()
             self.process_post_backup_date_read()
+            self.run_old_backup_clean()
             self.metrics.next_backup.labels(backup_name=self.params.backup_name).set(
                 int(float(time.time()) + self.params.backup_interval))
             self.metrics.backup_state.labels(backup_name=self.params.backup_name).state("Waiting")
@@ -154,6 +155,10 @@ class AppMetrics:
         print("Restore Finished")
         while True:
             time.sleep(1000)
+
+    def run_old_backup_clean(self):
+        """Run duplicity clean."""
+        self.duplicity.run_old_backup_clean()
 
     def process_pre_backup_date_write(self):
         """Run pre-backup restore date file write and save/export metric."""
@@ -242,6 +247,7 @@ def main():
     )
     duplicity_params = duplicity.DuplicityParams(
         full_if_older_than=str(os.getenv("DUPLICITY_FULL_IF_OLDER_THAN", "")),
+        remove_all_but_n_full=int(os.getenv("DUPLICITY_REMOVE_ALL_BUT_N_FULL", 0)),
         exclude_backup_dirs=str(os.getenv("EXCLUDE_BACKUP_DIRS", "")),
         restore_to_time=str(os.getenv("RESTORE_TO_TIME", "")),
         verbosity=str(os.getenv("DUPLICITY_VERBOSITY", "")),
@@ -267,6 +273,13 @@ def main():
         print("Starting Restore")
         app_metrics.run_restore()
         return
+    
+    if duplicity_run_mode == "CLEAN":
+        print("Starting Clean")
+        app_metrics.run_old_backup_clean()
+        print("Clean Finished")
+        while True:
+            time.sleep(1000)
 
     if duplicity_run_mode == "WAIT":
         print("Going into wait mode")
