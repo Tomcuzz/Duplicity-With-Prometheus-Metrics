@@ -278,6 +278,7 @@ def main():
     duplicity_params = duplicity.DuplicityParams(
         full_if_older_than=str(os.getenv("DUPLICITY_FULL_IF_OLDER_THAN", "")),
         remove_all_but_n_full=int(os.getenv("DUPLICITY_REMOVE_ALL_BUT_N_FULL", 0)),
+        remove_all_inc_of_but_n_full=int(os.getenv("DUPLICITY_REMOVE_ALL_INC_OF_BUT_N_FULL", 0)),
         exclude_backup_dirs=str(os.getenv("EXCLUDE_BACKUP_DIRS", "")),
         restore_to_time=str(os.getenv("RESTORE_TO_TIME", "")),
         verbosity=str(os.getenv("DUPLICITY_VERBOSITY", "")),
