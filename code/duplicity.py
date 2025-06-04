@@ -110,7 +110,7 @@ class Duplicity:
         if self.params.remove_all_but_n_full > 0:
             print("[Duplicity Old Backup Cleanup]: Starting old backup clean")
             log = self.__capture_command_out(
-                command=self.__build_duplicity_clean_command(),
+                command=self.__build_duplicity_old_backup_clean_command(),
                 print_prefix="[Duplicity Backup Old Cleanup]")
         else:
             print("[Duplicity Backup Old Cleanup]: 0 \"remove_all_but_n_full\" given so clean was not run")
