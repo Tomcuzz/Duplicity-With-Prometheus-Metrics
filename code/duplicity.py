@@ -31,6 +31,8 @@ metric_template = {
     }
 }
 
+collection_status_metrics_template = {}
+
 class DuplicityBackupMethod(Enum):
     """An enum to control backup storage location connection type."""
     UNKNOWN = 0
@@ -95,7 +97,7 @@ class Duplicity:
         log = self.__capture_command_out(
             command=self.__build_duplicity_collection_status_command(),
             print_prefix="[Duplicity Collection Status]")
-        return {"sucess": True}
+        return self.__process_duplicity_collection_status(logs)
 
     def run_cleanup(self) -> dict:
         """ Run duplicity cleanup. """
@@ -330,6 +332,11 @@ class Duplicity:
                                 out["size"]["totalDestChange"] = sline[1]
             elif line.startswith("--------------[ Backup Statistics ]--------------"):
                 reached_stats = True
+        return out
+
+    def __process_duplicity_collection_status(self, log_output:list) -> dict:
+        """ Process duplicity collection status to extract metrics. """
+        out = copy.deepcopy(collection_status_metrics_template)
         return out
 
     def __write_duplicity_restore_test_file(self) -> dict:
