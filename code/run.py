@@ -157,8 +157,12 @@ class AppMetrics:
             time.sleep(1000)
 
     def run_old_backup_clean(self):
-        """Run duplicity clean."""
+        """Run duplicity old backup clean."""
         self.duplicity.run_old_backup_clean()
+
+    def run_cleanup(self):
+        """Run duplicity cleanup."""
+        self.duplicity.run_cleanup()
 
     def process_pre_backup_date_write(self):
         """Run pre-backup restore date file write and save/export metric."""
@@ -277,6 +281,13 @@ def main():
     if duplicity_run_mode == "CLEAN":
         print("Starting Clean")
         app_metrics.run_old_backup_clean()
+        print("Clean Finished")
+        while True:
+            time.sleep(1000)
+    
+    if duplicity_run_mode == "CLEANUP":
+        print("Starting Clean")
+        app_metrics.run_cleanup()
         print("Clean Finished")
         while True:
             time.sleep(1000)
