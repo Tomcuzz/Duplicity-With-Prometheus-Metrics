@@ -148,6 +148,15 @@ class Duplicity:
             print("Error restore confirmation file not present and correct")
         return False
 
+    def get_local_size() -> int:
+        return self.__get_folder_size(self.params.location_params.local_path)
+
+    def get_backup_size() -> int:
+        return self.__get_folder_size(self.params.location_params.remote_path)
+
+    def __get_folder_size(folder:str) -> int:
+        return sum(entry.stat().st_size for entry in os.scandir(folder))
+
     def __build_duplicity_command(self) -> list:
         """ Build the duplicity command. """
         out = ["duplicity"]
