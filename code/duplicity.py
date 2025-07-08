@@ -11,6 +11,8 @@ import subprocess
 import pytz
 from datetime import datetime
 
+from recursive_size import get_size
+
 metric_template = {
     "running":              False,
     "getSuccess":           False,
@@ -149,13 +151,10 @@ class Duplicity:
         return False
 
     def get_local_size(self) -> int:
-        return self.__get_folder_size(self.params.location_params.local_path)
+        return get_size(self.params.location_params.local_path)
 
     def get_backup_size(self) -> int:
-        return self.__get_folder_size(self.params.location_params.remote_path)
-
-    def __get_folder_size(self, folder:str) -> int:
-        return sum(entry.stat().st_size for entry in os.scandir(folder))
+        return get_size(self.params.location_params.remote_path)
 
     def __build_duplicity_command(self) -> list:
         """ Build the duplicity command. """
