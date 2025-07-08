@@ -60,6 +60,11 @@ class Metrics:
     num_incremental_backups = Gauge(
         "duplicity_num_incremental_backups", "Number of Incremental Backups on Target", labelnames=['backup_name'])
 
+    local_folder_size = Gauge(
+        "duplicity_local_folder_size", "Size of folder to be backed up", labelnames=['backup_name'])
+    backup_folder_size = Gauge(
+        "duplicity_backup_folder_size", "Size of backup folder", labelnames=['backup_name'])
+
     pre_backup_date_file_last_backup =  Gauge(
         "duplicity_pre_backup_date_file_date",
         "Last Pre Backup File Backup Date",
@@ -189,6 +194,10 @@ class AppMetrics:
     def run_collection_status(self):
         """Run duplicity collection status."""
         self.save_last_collection_stats(self.duplicity.run_collection_status())
+        self.metrics.local_folder_size.labels(backup_name=self.params.backup_name).set(
+            self.duplicity.get_local_size())
+        self.metrics.backup_folder_size.labels(backup_name=self.params.backup_name).set(
+            self.duplicity.get_backup_size())
 
     def process_pre_backup_date_write(self):
         """Run pre-backup restore date file write and save/export metric."""
