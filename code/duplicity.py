@@ -285,7 +285,7 @@ class Duplicity:
         out = ["duplicity", "restore"]
         out.append("--allow-source-mismatch")
         out.append("--force")
-        out.append("--file-to-restore=data")
+        # out.append("--file-to-restore=data")
         if self.params.verbosity:
             out.append("--verbosity=" + self.params.verbosity)
         if self.params.restore_to_time:
