@@ -148,6 +148,7 @@ class Duplicity:
             return True
         else:
             print("Error restore confirmation file not present and correct")
+            print("You may need to run: echo \"restore\" > " + self.params.location_params.restore_confirm_file_path)
         return False
 
     def get_local_size(self) -> int:
