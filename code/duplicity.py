@@ -278,6 +278,7 @@ class Duplicity:
             out.append(rsync_location)
         elif self.params.backup_method == DuplicityBackupMethod.LOCAL:
             out.append("file://" + self.params.location_params.remote_path)
+        out.append("restore")
         out.append(self.params.location_params.restored_date_file)
         return out
 
