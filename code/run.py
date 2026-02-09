@@ -165,6 +165,7 @@ class AppMetrics:
             self.metrics.backup_state.labels(backup_name=self.params.backup_name).state("Running")
             self.run_collection_status()
             self.run_old_backup_clean()
+            self.run_cleanup()
             self.run_collection_status()
             self.process_pre_backup_date_write()
             self.process_backup()
