@@ -1,4 +1,4 @@
 prometheus-client
 requests
 pytz
-recursive-size
+# recursive-size

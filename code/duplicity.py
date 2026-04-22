@@ -11,7 +11,7 @@ import subprocess
 import pytz
 from datetime import datetime
 
-from recursive_size import get_size
+from size import get_size
 
 metric_template = {
     "running":              False,
