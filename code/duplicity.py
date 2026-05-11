@@ -331,7 +331,7 @@ class Duplicity:
                 break
             if print_prefix:
                 print(print_prefix + ": " + line.decode('utf-8', errors='replace').strip())
-            out.append(line.decode('utf-8'))
+            out.append(line.decode('utf-8', errors='replace'))
         while True:
             line = proc.stderr.readline()
             if not line:
